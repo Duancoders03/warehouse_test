@@ -1,0 +1,57 @@
+<header class="bg-white/95 backdrop-blur-md text-slate-800 shadow-sm sticky top-0 z-30 border-b border-slate-200/80 no-print">
+  <div class="w-full px-3 sm:px-5 md:px-6">
+    <div class="flex items-center justify-between h-14">
+      
+      <!-- Left Section: Mobile Menu / Desktop Toggle / Logo -->
+      <div class="flex items-center space-x-2.5 sm:space-x-3.5 flex-shrink-0">
+        
+        <!-- Mobile Menu Toggle Button (< md) -->
+        <button id="openMobileSidebarBtn" type="button" aria-label="Mở Menu Mobile" class="md:hidden p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none flex-shrink-0">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+
+        <!-- Desktop Sidebar Toggle Button (>= md) -->
+        <button id="toggleDesktopSidebarBtn" type="button" title="Thu gọn / Mở rộng Sidebar" aria-label="Thu gọn / Mở rộng Sidebar" class="hidden md:flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 transition-colors border border-slate-200/80 focus:outline-none flex-shrink-0">
+          <i id="toggleDesktopSidebarIcon" class="fa-solid fa-angles-left text-xs"></i>
+        </button>
+
+        <!-- Brand Logo & Clean Title -->
+        <a href="/" class="flex items-center space-x-2.5 group flex-shrink-0">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-extrabold text-base shadow-sm shadow-sky-500/20 group-hover:scale-105 transition-transform flex-shrink-0">
+            <i class="fa-solid fa-boxes-stacked"></i>
+          </div>
+          <span class="text-lg font-extrabold tracking-tight text-slate-900 group-hover:text-sky-600 transition-colors whitespace-nowrap">
+            VIMES <span class="text-sky-600 font-semibold">WMS</span>
+          </span>
+        </a>
+
+      </div>
+
+      <!-- Right Section: Quick Actions & User Profile -->
+      <div class="flex items-center space-x-2.5 sm:space-x-4 flex-shrink-0">
+        
+        <!-- Quick Create Button -->
+        <a href="/receipts/create" title="Lập Phiếu Nhập Kho" class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent text-xs font-semibold rounded-xl text-white bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 shadow-md shadow-sky-500/20 transition-all whitespace-nowrap flex-shrink-0">
+          <i class="fa-solid fa-plus sm:mr-1.5"></i>
+          <span class="hidden sm:inline">Lập Phiếu Nhập</span>
+          <span class="sm:hidden ml-1">Lập Phiếu</span>
+        </a>
+
+        <div class="h-5 w-px bg-slate-200 hidden sm:block flex-shrink-0"></div>
+
+        <!-- User Profile Avatar & Badge -->
+        <div class="flex items-center space-x-2.5 bg-slate-50 hover:bg-slate-100 p-1 sm:pr-3 rounded-full border border-slate-200/80 transition-colors flex-shrink-0 cursor-pointer">
+          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-xs flex-shrink-0">
+            AD
+          </div>
+          <div class="hidden md:block text-left leading-none">
+            <span class="block text-xs font-bold text-slate-800">Admin User</span>
+            <span class="block text-[10px] text-slate-500 font-medium">Quản Trị Viên</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</header>

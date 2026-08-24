@@ -1,0 +1,186 @@
+<div class="space-y-6">
+  
+  <!-- Action Bar (Hidden when printing) -->
+  <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-sm no-print">
+    <div class="flex items-center space-x-3">
+      <a href="/receipts" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition-colors">
+        <i class="fa-solid fa-arrow-left mr-1.5"></i> Trở Về Danh Sách
+      </a>
+      <span class="text-xs text-slate-400">|</span>
+      <span class="text-sm font-semibold text-slate-700">Trạng Thái: <span class="text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">Đã Hoàn Thành</span></span>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <button onclick="window.print()" class="px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm rounded-xl shadow-md transition-all">
+        <i class="fa-solid fa-print mr-2"></i> In Phiếu Nhập (Mẫu 01-VT)
+      </button>
+    </div>
+  </div>
+
+  <!-- Official Form Mẫu 01-VT Container -->
+  <div class="print-container bg-white p-8 md:p-12 rounded-2xl border border-slate-200 shadow-lg text-slate-900 mx-auto max-w-4xl font-serif">
+    
+    <!-- Top Header Layout -->
+    <div class="flex justify-between items-start border-b-2 border-slate-900 pb-4 mb-6">
+      <!-- Left Header -->
+      <div class="text-xs space-y-1">
+        <p><strong>Đơn vị:</strong> <%= companyName %></p>
+        <p><strong>Bộ phận:</strong> <%= receipt.created_by ? receipt.created_by.department : 'Phòng Kế Hoạch - Vật Tư' %></p>
+      </div>
+
+      <!-- Right Header Official Standard Info -->
+      <div class="text-right text-xs space-y-0.5">
+        <p class="font-bold text-sm">Mẫu số 01 - VT</p>
+        <p class="italic text-[11px] text-slate-600">(Ban hành theo Thông tư số 200/2014/TT-BTC</p>
+        <p class="italic text-[11px] text-slate-600">ngày 22/12/2014 của Bộ Tài chính)</p>
+      </div>
+    </div>
+
+    <!-- Title Section -->
+    <div class="text-center my-6 space-y-1">
+      <h1 class="text-2xl font-bold uppercase tracking-wider text-slate-950">PHIẾU NHẬP KHO</h1>
+      
+      <% 
+        const dateObj = new Date(receipt.receipt_date);
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const year = dateObj.getFullYear();
+      %>
+      <p class="italic text-sm text-slate-700">Ngày <%= day %> tháng <%= month %> năm <%= year %></p>
+      <p class="font-bold text-sm text-slate-900">Số: <span class="text-sky-900"><%= receipt.receipt_no %></span></p>
+    </div>
+
+    <!-- Metadata Grid -->
+    <div class="text-sm space-y-2 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <p>- Họ và tên người giao hàng: <strong class="text-slate-900"><%= receipt.deliverer_name || '................................................' %></strong></p>
+        <div class="text-right font-medium">
+          Nợ: <span class="border-b border-dotted border-slate-900 px-3"><%= receipt.debit_account || '152' %></span>
+          Có: <span class="border-b border-dotted border-slate-900 px-3"><%= receipt.credit_account || '331' %></span>
+        </div>
+      </div>
+
+      <p>- Theo chứng từ gốc số: <strong><%= receipt.original_document_no || '................' %></strong> ngày <%= receipt.original_document_date || '..../..../20...' %> của <strong><%= receipt.supplier ? receipt.supplier.name : '................' %></strong></p>
+      <p>- Nhập tại kho: <strong><%= receipt.warehouse ? receipt.warehouse.name : '................' %></strong> - Địa điểm: <strong><%= receipt.warehouse ? (receipt.warehouse.address || '................') : '................' %></strong></p>
+    </div>
+
+    <!-- Main Table: Exactly 8 Columns according to Mẫu 01-VT -->
+    <div class="mb-6 overflow-x-auto">
+      <table class="w-full border-collapse border border-slate-900 text-xs text-slate-900">
+        <thead>
+          <tr class="bg-slate-100 text-center font-bold">
+            <th class="border border-slate-900 p-2 w-10" rowspan="2">STT</th>
+            <th class="border border-slate-900 p-2 min-w-[200px]" rowspan="2">Tên, nhãn hiệu, quy cách,<br>phẩm chất vật tư, dụng cụ sản phẩm</th>
+            <th class="border border-slate-900 p-2 w-20" rowspan="2">Mã số</th>
+            <th class="border border-slate-900 p-2 w-16" rowspan="2">Đơn vị<br>tính</th>
+            <th class="border border-slate-900 p-1" colspan="2">Số lượng</th>
+            <th class="border border-slate-900 p-2 w-28" rowspan="2">Đơn giá</th>
+            <th class="border border-slate-900 p-2 w-32" rowspan="2">Thành tiền</th>
+          </tr>
+          <tr class="bg-slate-100 text-center font-bold">
+            <th class="border border-slate-900 p-1.5 w-20">Theo chứng từ</th>
+            <th class="border border-slate-900 p-1.5 w-20">Thực nhập</th>
+          </tr>
+          <tr class="bg-slate-50 text-center italic text-[11px] font-semibold">
+            <td class="border border-slate-900 p-1">A</td>
+            <td class="border border-slate-900 p-1">B</td>
+            <td class="border border-slate-900 p-1">C</td>
+            <td class="border border-slate-900 p-1">D</td>
+            <td class="border border-slate-900 p-1">1</td>
+            <td class="border border-slate-900 p-1">2</td>
+            <td class="border border-slate-900 p-1">3</td>
+            <td class="border border-slate-900 p-1">4</td>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (receipt.details && receipt.details.length > 0) { %>
+            <% receipt.details.forEach((det, idx) => { %>
+              <tr>
+                <td class="border border-slate-900 p-2 text-center font-medium"><%= idx + 1 %></td>
+                <td class="border border-slate-900 p-2">
+                  <span class="font-bold"><%= det.item_name %></span>
+                  <% if (det.specifications) { %>
+                    <br><span class="text-[11px] italic text-slate-600">(<%= det.specifications %>)</span>
+                  <% } %>
+                  <% if (det.warehouse_name) { %>
+                    <br><span class="text-[10px] text-sky-800 font-sans">[Kho: <%= det.warehouse_name %>]</span>
+                  <% } %>
+                </td>
+                <td class="border border-slate-900 p-2 text-center font-mono font-medium"><%= det.item_code %></td>
+                <td class="border border-slate-900 p-2 text-center"><%= det.unit_name %></td>
+                <td class="border border-slate-900 p-2 text-right"><%= det.document_quantity %></td>
+                <td class="border border-slate-900 p-2 text-right font-bold"><%= det.actual_quantity %></td>
+                <td class="border border-slate-900 p-2 text-right"><%= new Intl.NumberFormat('vi-VN').format(det.unit_price) %></td>
+                <td class="border border-slate-900 p-2 text-right font-bold"><%= new Intl.NumberFormat('vi-VN').format(det.amount) %></td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr>
+              <td colspan="8" class="border border-slate-900 p-4 text-center text-slate-400">Không có dòng vật tư.</td>
+            </tr>
+          <% } %>
+        </tbody>
+        <tfoot>
+          <tr class="font-bold">
+            <td colspan="4" class="border border-slate-900 p-2.5 text-center uppercase">Cộng</td>
+            <td class="border border-slate-900 p-2 text-right">x</td>
+            <td class="border border-slate-900 p-2 text-right">x</td>
+            <td class="border border-slate-900 p-2 text-right">x</td>
+            <td class="border border-slate-900 p-2.5 text-right font-extrabold text-sm">
+              <%= new Intl.NumberFormat('vi-VN').format(receipt.total_amount) %>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Amount in Words & Notes -->
+    <div class="text-sm space-y-1.5 mb-8">
+      <p>- Tổng số tiền (bằng chữ): <strong class="italic text-slate-950"><%= totalAmountWords %></strong></p>
+      <p>- Số chứng từ gốc kèm theo: <strong><%= receipt.original_document_no ? '1' : '0' %></strong> (chứng từ gốc)</p>
+    </div>
+
+    <!-- Signatures Section -->
+    <div class="mt-8 pt-4">
+      <div class="text-right italic text-xs mb-4">
+        Ngày <%= day %> tháng <%= month %> năm <%= year %>
+      </div>
+
+      <div class="grid grid-cols-4 gap-2 text-center text-xs">
+        <div>
+          <p class="font-bold">Người lập phiếu</p>
+          <p class="italic text-[11px] text-slate-500 mb-16">(Ký, họ tên)</p>
+          <p class="font-bold border-t border-dotted border-slate-300 pt-1">
+            <%= receipt.created_by ? receipt.created_by.full_name : '.......................' %>
+          </p>
+        </div>
+
+        <div>
+          <p class="font-bold">Người giao hàng</p>
+          <p class="italic text-[11px] text-slate-500 mb-16">(Ký, họ tên)</p>
+          <p class="font-bold border-t border-dotted border-slate-300 pt-1">
+            <%= receipt.deliverer_name || '.......................' %>
+          </p>
+        </div>
+
+        <div>
+          <p class="font-bold">Thủ kho</p>
+          <p class="italic text-[11px] text-slate-500 mb-16">(Ký, họ tên)</p>
+          <p class="font-bold border-t border-dotted border-slate-300 pt-1">
+            <%= receipt.keeper ? receipt.keeper.full_name : '.......................' %>
+          </p>
+        </div>
+
+        <div>
+          <p class="font-bold">Kế toán trưởng</p>
+          <p class="italic text-[11px] text-slate-500 mb-16">(Hoặc bộ phận có nhu cầu lập)<br>(Ký, họ tên)</p>
+          <p class="font-bold border-t border-dotted border-slate-300 pt-1">
+            <%= receipt.accountant ? receipt.accountant.full_name : '.......................' %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

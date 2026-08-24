@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full bg-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'Quản Lý Kho VIMES' %></title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="h-full font-sans antialiased text-slate-800 flex flex-col bg-slate-100">
+
+  <!-- Header / Top Navigation (Light Glass Theme) -->
+  <%- include('../partials/header') %>
+
+  <div class="flex-grow flex overflow-hidden">
+    <!-- Sidebar Navigation (Sleek Dark Navy Theme) -->
+    <%- include('../partials/sidebar') %>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50/70">
+      <div class="max-w-[1360px] mx-auto space-y-6">
+        <%- body %>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/sidebar.js"></script>
+  <script src="/js/receipt-form.js"></script>
+</body>
+</html>

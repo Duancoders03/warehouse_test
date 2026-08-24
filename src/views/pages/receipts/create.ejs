@@ -1,0 +1,235 @@
+<div class="space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-4">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900">Lập Phiếu Nhập Kho Mới (Mẫu 01-VT)</h1>
+      <p class="text-sm text-slate-500 mt-1">Chuẩn hóa theo Thông tư 200/2014/TT-BTC ban hành ngày 22/12/2014</p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <a href="/receipts" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-medium rounded-xl transition-colors">
+        <i class="fa-solid fa-arrow-left mr-1.5"></i> Hủy & Quay Lại
+      </a>
+      <button type="submit" form="createReceiptForm" class="px-5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium rounded-xl shadow-md transition-all">
+        <i class="fa-solid fa-floppy-disk mr-1.5"></i> Lưu Phiếu Nhập
+      </button>
+    </div>
+  </div>
+
+  <form id="createReceiptForm" class="space-y-6">
+    
+    <!-- Section 1: Thôn tin chung Header -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+      <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center">
+        <i class="fa-solid fa-file-signature text-sky-600 mr-2"></i> 1. Thông Tin Chung Chứng Từ
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Số Phiếu Nhập <span class="text-red-500">*</span></label>
+          <input type="text" id="receipt_no" name="receipt_no" value="<%= nextReceiptNo %>" required class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none font-bold text-sky-700">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Ngày Lập Phiếu <span class="text-red-500">*</span></label>
+          <input type="date" id="receipt_date" name="receipt_date" value="<%= todayStr %>" required class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Số Chứng Từ Gốc</label>
+          <input type="text" id="original_document_no" name="original_document_no" placeholder="VD: HĐ 000123 / PXK 88" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Ngày Chứng Từ Gốc</label>
+          <input type="date" id="original_document_date" name="original_document_date" value="<%= todayStr %>" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Họ Tên Người Giao Hàng</label>
+          <input type="text" id="deliverer_name" name="deliverer_name" placeholder="Họ tên người giao" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nhà Cung Cấp / Đơn Vị Giao</label>
+          <select id="supplier_id" name="supplier_id" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+            <option value="">-- Chọn Nhà Cung Cấp --</option>
+            <% suppliers.forEach(s => { %>
+              <option value="<%= s.id %>"><%= s.name %> (<%= s.code %>)</option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Kho Nhận Mặc Định</label>
+          <select id="warehouse_id" name="warehouse_id" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+            <option value="">-- Chọn Kho Nhận --</option>
+            <% warehouses.forEach(w => { %>
+              <option value="<%= w.id %>"><%= w.name %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">TK Nợ</label>
+            <input type="text" id="debit_account" name="debit_account" value="152" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">TK Có</label>
+            <input type="text" id="credit_account" name="credit_account" value="331" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Section 2: Bảng Chi Tiết 8 Cột Mẫu 01-VT -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h2 class="text-base font-bold text-slate-900 flex items-center">
+          <i class="fa-solid fa-table-list text-sky-600 mr-2"></i> 2. Chi Tiết Vật Tư / Hàng Hóa (Đúng 8 Cột Mẫu 01-VT)
+        </h2>
+        <button type="button" id="addRowBtn" class="inline-flex items-center px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs rounded-lg transition-colors">
+          <i class="fa-solid fa-plus mr-1"></i> Thêm Dòng Vật Tư
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-slate-200 text-left text-xs">
+          <thead class="bg-slate-100 text-slate-700 uppercase font-semibold">
+            <tr>
+              <th class="border border-slate-300 p-2 text-center w-10">STT<br><span class="text-[10px] text-slate-400 font-normal">(Cột A)</span></th>
+              <th class="border border-slate-300 p-2 min-w-[220px]">Tên Quy Cách Phẩm Chất & Mã Số<br><span class="text-[10px] text-slate-400 font-normal">(Cột B & C)</span></th>
+              <th class="border border-slate-300 p-2 w-28">Đơn Vị Tính<br><span class="text-[10px] text-slate-400 font-normal">(Cột D)</span></th>
+              <th class="border border-slate-300 p-2 w-28">SL Chứng Từ<br><span class="text-[10px] text-slate-400 font-normal">(Cột 1)</span></th>
+              <th class="border border-slate-300 p-2 w-28">SL Thực Nhập<br><span class="text-[10px] text-slate-400 font-normal">(Cột 2)</span></th>
+              <th class="border border-slate-300 p-2 w-32">Đơn Giá (VNĐ)<br><span class="text-[10px] text-slate-400 font-normal">(Cột 3)</span></th>
+              <th class="border border-slate-300 p-2 w-36">Thành Tiền (VNĐ)<br><span class="text-[10px] text-slate-400 font-normal">(Cột 4)</span></th>
+              <th class="border border-slate-300 p-2 min-w-[150px]">Kho Thực Nhập</th>
+              <th class="border border-slate-300 p-2 text-center w-12">Xóa</th>
+            </tr>
+          </thead>
+          <tbody id="receiptItemsBody">
+            <tr class="item-row hover:bg-slate-50">
+              <td class="border border-slate-200 p-2 text-center font-bold text-slate-600 row-stt">1</td>
+              
+              <td class="border border-slate-200 p-2 space-y-1">
+                <select class="item-select w-full text-xs p-1.5 border border-slate-300 rounded focus:ring-1 focus:ring-sky-500 outline-none">
+                  <option value="">-- Chọn Vật Tư / Hàng Hóa --</option>
+                  <% items.forEach(item => { %>
+                    <option value="<%= item.id %>" data-unit-id="<%= item.unit_id %>" data-spec="<%= item.specifications %>">
+                      [<%= item.code %>] <%= item.name %>
+                    </option>
+                  <% }) %>
+                </select>
+                <input type="text" class="specifications-input w-full text-[11px] p-1 border border-slate-200 rounded text-slate-500" placeholder="Quy cách phẩm chất (nếu có)">
+              </td>
+
+              <td class="border border-slate-200 p-2">
+                <select class="unit-select w-full text-xs p-1.5 border border-slate-300 rounded focus:ring-1 focus:ring-sky-500 outline-none">
+                  <% units.forEach(u => { %>
+                    <option value="<%= u.id %>"><%= u.name %></option>
+                  <% }) %>
+                </select>
+              </td>
+
+              <td class="border border-slate-200 p-2">
+                <input type="number" step="0.01" value="1" class="doc-qty-input w-full text-xs p-1.5 border border-slate-300 rounded text-right font-medium">
+              </td>
+
+              <td class="border border-slate-200 p-2">
+                <input type="number" step="0.01" value="1" class="actual-qty-input w-full text-xs p-1.5 border border-slate-300 rounded text-right font-bold text-sky-700">
+              </td>
+
+              <td class="border border-slate-200 p-2">
+                <input type="number" step="100" value="0" class="unit-price-input w-full text-xs p-1.5 border border-slate-300 rounded text-right font-medium">
+              </td>
+
+              <td class="border border-slate-200 p-2">
+                <input type="text" readonly value="0" class="amount-input w-full text-xs p-1.5 bg-slate-50 border border-slate-200 rounded text-right font-extrabold text-emerald-700 outline-none">
+              </td>
+
+              <td class="border border-slate-200 p-2">
+                <select class="row-warehouse-select w-full text-xs p-1.5 border border-slate-300 rounded focus:ring-1 focus:ring-sky-500 outline-none">
+                  <option value="">Mặc định kho header</option>
+                  <% warehouses.forEach(w => { %>
+                    <option value="<%= w.id %>"><%= w.name %></option>
+                  <% }) %>
+                </select>
+              </td>
+
+              <td class="border border-slate-200 p-2 text-center">
+                <button type="button" class="remove-row-btn text-rose-500 hover:text-rose-700 p-1">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot class="bg-slate-50 font-bold border-t-2 border-slate-300">
+            <tr>
+              <td colspan="6" class="border border-slate-300 p-3 text-right uppercase text-slate-700">
+                Tổng Cộng Thành Tiền Phiếu Nhập:
+              </td>
+              <td colspan="3" class="border border-slate-300 p-3 text-left text-base text-emerald-700 font-extrabold" id="totalAmountDisplay">
+                0 đ
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section 3: Phân Phối Nhân Sự & Ký Duyệt 3 Vai Trò -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+      <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center">
+        <i class="fa-solid fa-users text-sky-600 mr-2"></i> 3. Phân Công Nhân Sự Phụ Trách Ký Duyệt (3 Vai Trò)
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">1. Người Lập Phiếu <span class="text-red-500">*</span></label>
+          <select id="created_by_id" name="created_by_id" required class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+            <% creators.forEach(c => { 
+              const creatorWh = warehouses.find(w => w.id === c.warehouse_id);
+            %>
+              <option value="<%= c.id %>" data-warehouse-id="<%= c.warehouse_id || '' %>"><%= c.full_name %> (<%= creatorWh ? creatorWh.name : (c.department || 'Nhân viên') %>)</option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">2. Thủ Kho Nhận Hàng</label>
+          <select id="keeper_id" name="keeper_id" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+            <% keepers.forEach(k => { 
+              const keeperWh = warehouses.find(w => w.id === k.warehouse_id);
+            %>
+              <option value="<%= k.id %>" data-warehouse-id="<%= k.warehouse_id || '' %>"><%= k.full_name %> (<%= keeperWh ? keeperWh.name : (k.department || 'Thủ kho') %>)</option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">3. Kế Toán Trưởng Duyệt</label>
+          <select id="accountant_id" name="accountant_id" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+            <% accountants.forEach(a => { %>
+              <option value="<%= a.id %>"><%= a.full_name %> (<%= a.department || 'Kế toán' %>)</option>
+            <% }) %>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Action Buttons -->
+    <div class="flex items-center justify-end space-x-3 pt-4">
+      <a href="/receipts" class="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-medium rounded-xl transition-colors">
+        Hủy Bỏ
+      </a>
+      <button type="submit" class="px-8 py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-sky-500/25 transition-all">
+        <i class="fa-solid fa-floppy-disk mr-2"></i> Lưu & Xem Mẫu In 01-VT
+      </button>
+    </div>
+
+  </form>
+</div>
