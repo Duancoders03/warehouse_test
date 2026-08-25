@@ -35,9 +35,9 @@ export class ReceiptController {
       const suppliers = await supplierService.getSuppliers();
       const items = await itemService.getItems();
       const units = await unitService.getUnits();
-      const creators = await userService.getUsers('CREATOR');
-      const keepers = await userService.getUsers('KEEPER');
-      const accountants = await userService.getUsers('ACCOUNTANT');
+      const creators = await userService.getAllUsersList('creator');
+      const keepers = await userService.getAllUsersList('keeper');
+      const accountants = await userService.getAllUsersList('accountant');
 
       const nextReceiptNo = receiptService.generateNextReceiptNo();
       const todayStr = new Date().toISOString().split('T')[0];

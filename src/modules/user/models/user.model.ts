@@ -6,7 +6,7 @@ export interface UserAttributes {
   code: string;
   full_name: string;
   department?: string;
-  role: 'CREATOR' | 'KEEPER' | 'ACCOUNTANT';
+  role: 'creator' | 'keeper' | 'accountant';
 }
 
 export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'department'> {}
@@ -19,7 +19,7 @@ export class User
   declare code: string;
   declare full_name: string;
   declare department: string;
-  declare role: 'CREATOR' | 'KEEPER' | 'ACCOUNTANT';
+  declare role: 'creator' | 'keeper' | 'accountant';
 }
 
 User.init(
@@ -32,21 +32,58 @@ User.init(
     code: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      unique: true,
+      unique: {
+        name: "unique_code",
+        msg: "Mã người dùng đã tồn tại",
+      },
+      validate: {
+        notEmpty: {
+          msg: 'Mã người dùng không được để trống',
+        },
+        len: {
+          args: [2, 50],
+          msg: 'Mã người dùng phải có độ dài từ 2 đến 50 ký tự',
+        },
+      },
     },
     full_name: {
       type: DataTypes.STRING(100),
       allowNull: false,
+      unique: {
+        name: "unique_full_name",
+        msg: "Họ và tên người dùng đã tồn tại",
+      },
+      validate: {
+        notEmpty: {
+          msg: 'Họ và tên người dùng không được để trống',
+        },
+        len: {
+          args: [2, 100],
+          msg: 'Họ và tên người dùng phải có độ dài từ 2 đến 100 ký tự',
+        },
+      },
     },
     department: {
       type: DataTypes.STRING(100),
       allowNull: true,
+      validate: {
+        len: {
+          args: [0, 100],
+          msg: 'Tên phòng ban không được vượt quá 100 ký tự',
+        },
+      },
     },
     role: {
       type: DataTypes.STRING(50),
       allowNull: false,
       validate: {
-        isIn: [['CREATOR', 'KEEPER', 'ACCOUNTANT']],
+        notEmpty: {
+          msg: 'Vai trò người dùng không được để trống',
+        },
+        isIn: {
+          args: [['creator', 'keeper', 'accountant']],
+          msg: 'Vai trò người dùng phải là creator, keeper hoặc accountant',
+        },
       },
     },
   },

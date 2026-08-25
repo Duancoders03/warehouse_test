@@ -1,5 +1,5 @@
 import { InventoryReceiptDto, CreateReceiptDto } from '../dtos/receipt.dto';
-import { MOCK_USERS } from '../../user/services/user.service';
+import { userService } from '../../user/services/user.service';
 
 const receiptsStore: InventoryReceiptDto[] = [
   {
@@ -16,12 +16,12 @@ const receiptsStore: InventoryReceiptDto[] = [
     debit_account: '152',
     credit_account: '331',
     total_amount: 154500000,
-    created_by_id: 'e-1',
-    created_by: MOCK_USERS[0],
-    keeper_id: 'e-3',
-    keeper: MOCK_USERS[2],
-    accountant_id: 'e-2',
-    accountant: MOCK_USERS[1],
+    created_by_id: '33333333-3333-3333-3333-333333333301',
+    created_by: { id: '33333333-3333-3333-3333-333333333301', code: 'NV-001', full_name: 'Nguyễn Văn Lập (Kế Toán Kho)', department: 'Phòng Kế Toán', role: 'creator' },
+    keeper_id: '33333333-3333-3333-3333-333333333303',
+    keeper: { id: '33333333-3333-3333-3333-333333333303', code: 'NV-003', full_name: 'Lê Văn Khoa (Thủ Kho)', department: 'Ban Quản Lý Kho', role: 'keeper' },
+    accountant_id: '33333333-3333-3333-3333-333333333302',
+    accountant: { id: '33333333-3333-3333-3333-333333333302', code: 'NV-002', full_name: 'Trần Thị Thu (Kế Toán Trưởng)', department: 'Phòng Kế Toán', role: 'accountant' },
     created_at: '2026-08-24T08:30:00.000Z',
     details: [
       {
@@ -74,12 +74,12 @@ const receiptsStore: InventoryReceiptDto[] = [
     debit_account: '1521',
     credit_account: '1111',
     total_amount: 47500000,
-    created_by_id: 'e-1',
-    created_by: MOCK_USERS[0],
-    keeper_id: 'e-4',
-    keeper: MOCK_USERS[3] || MOCK_USERS[2],
-    accountant_id: 'e-5',
-    accountant: MOCK_USERS[1],
+    created_by_id: '33333333-3333-3333-3333-333333333301',
+    created_by: { id: '33333333-3333-3333-3333-333333333301', code: 'NV-001', full_name: 'Nguyễn Văn Lập (Kế Toán Kho)', department: 'Phòng Kế Toán', role: 'creator' },
+    keeper_id: '33333333-3333-3333-3333-333333333304',
+    keeper: { id: '33333333-3333-3333-3333-333333333304', code: 'NV-004', full_name: 'Phạm Minh Tuấn (Thủ Kho)', department: 'Ban Quản Lý Kho', role: 'keeper' },
+    accountant_id: '33333333-3333-3333-3333-333333333302',
+    accountant: { id: '33333333-3333-3333-3333-333333333302', code: 'NV-002', full_name: 'Trần Thị Thu (Kế Toán Trưởng)', department: 'Phòng Kế Toán', role: 'accountant' },
     created_at: '2026-08-23T14:15:00.000Z',
     details: [
       {
@@ -143,9 +143,9 @@ export class ReceiptService {
 
   async createReceipt(dto: CreateReceiptDto): Promise<InventoryReceiptDto> {
     const id = `rec-${Date.now()}`;
-    const createdBy = MOCK_USERS.find(u => u.id === dto.created_by_id);
-    const keeper = MOCK_USERS.find(u => u.id === dto.keeper_id);
-    const accountant = MOCK_USERS.find(u => u.id === dto.accountant_id);
+    const createdBy = (await userService.getUserById(dto.created_by_id)) || undefined;
+    const keeper = dto.keeper_id ? ((await userService.getUserById(dto.keeper_id)) || undefined) : undefined;
+    const accountant = dto.accountant_id ? ((await userService.getUserById(dto.accountant_id)) || undefined) : undefined;
 
     let total_amount = 0;
     const details = dto.details.map((item, index) => {

@@ -3,7 +3,7 @@ export interface UserDto {
   code: string;
   full_name: string;
   department?: string;
-  role: 'CREATOR' | 'KEEPER' | 'ACCOUNTANT';
+  role: 'creator' | 'keeper' | 'accountant' | 'CREATOR' | 'KEEPER' | 'ACCOUNTANT';
 }
 
 export type CreateUserDto = Omit<UserDto, 'id'>;

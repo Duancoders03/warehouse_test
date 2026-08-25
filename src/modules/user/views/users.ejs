@@ -1,22 +1,52 @@
 <div class="space-y-6">
   
-  <!-- Header -->
+  <!-- Notification Alerts -->
+  <% if (typeof successMsg !== 'undefined' && successMsg) { %>
+    <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center justify-between shadow-sm animate-fade-in">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+        <span class="font-medium"><%= successMsg %></span>
+      </div>
+      <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  <% } %>
+
+  <% if (typeof errorMsg !== 'undefined' && errorMsg) { %>
+    <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-center justify-between shadow-sm animate-fade-in">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-triangle-exclamation text-rose-600 text-base"></i>
+        <span class="font-medium"><%= errorMsg %></span>
+      </div>
+      <button onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  <% } %>
+
+  <!-- Header Section -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-4">
     <div>
       <h1 class="text-2xl font-bold tracking-tight text-slate-900">Danh Mục Người Dùng / Vai Trò</h1>
-      <p class="text-sm text-slate-500 mt-1">Quản lý danh sách nhân sự thực hiện các vai trò: Người lập phiếu, Thủ kho và Kế toán trưởng</p>
+      <p class="text-sm text-slate-500 mt-1">Quản lý người dùng và phân quyền vai trò linh hoạt (Người lập phiếu, Thủ kho, Kế toán trưởng)</p>
+    </div>
+    <div>
+      <button onclick="openCreateModal()" class="inline-flex items-center justify-center px-4 py-2.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-medium text-sm rounded-xl shadow-md shadow-sky-500/20 transition-all cursor-pointer">
+        <i class="fa-solid fa-plus mr-2"></i> Thêm Người Dùng Mới
+      </button>
     </div>
   </div>
 
-  <!-- Filter & Search Bar -->
-  <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+  <!-- Search & Filter Bar -->
+  <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+    <form method="GET" action="/master/users" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       
       <!-- Search Keyword -->
       <div>
-        <label class="block text-xs font-semibold text-slate-600 mb-1">Tìm Kiếm Nhanh</label>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Tìm Kiếm Từ Khóa</label>
         <div class="relative">
-          <input type="text" id="userSearchKeyword" placeholder="Mã NV, họ tên, phòng ban..." class="w-full text-sm pl-9 pr-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+          <input type="text" name="keyword" value="<%= typeof keyword !== 'undefined' ? keyword : '' %>" placeholder="Mã NV, họ tên, phòng ban..." class="w-full text-sm pl-9 pr-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
         </div>
       </div>
@@ -24,37 +54,48 @@
       <!-- Role Filter -->
       <div>
         <label class="block text-xs font-semibold text-slate-600 mb-1">Lọc Theo Vai Trò</label>
-        <select id="userRoleFilter" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        <select name="role" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
           <option value="">-- Tất cả vai trò --</option>
-          <option value="CREATOR">Người lập phiếu (CREATOR)</option>
-          <option value="KEEPER">Thủ kho (KEEPER)</option>
-          <option value="ACCOUNTANT">Kế toán trưởng (ACCOUNTANT)</option>
+          <option value="creator" <%= typeof roleFilter !== 'undefined' && roleFilter.toLowerCase() === 'creator' ? 'selected' : '' %>>Người lập phiếu (creator)</option>
+          <option value="keeper" <%= typeof roleFilter !== 'undefined' && roleFilter.toLowerCase() === 'keeper' ? 'selected' : '' %>>Thủ kho (keeper)</option>
+          <option value="accountant" <%= typeof roleFilter !== 'undefined' && roleFilter.toLowerCase() === 'accountant' ? 'selected' : '' %>>Kế toán trưởng (accountant)</option>
         </select>
       </div>
 
-    </div>
+      <!-- Action Buttons -->
+      <div class="flex items-end space-x-2">
+        <button type="submit" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded-xl transition-all cursor-pointer">
+          <i class="fa-solid fa-filter mr-1.5"></i> Lọc Dữ Liệu
+        </button>
+        <a href="/master/users" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium text-sm rounded-xl transition-all inline-flex items-center">
+          <i class="fa-solid fa-rotate-left mr-1.5"></i> Đặt Lại
+        </a>
+      </div>
+
+    </form>
   </div>
 
-  <!-- Users Table -->
+  <!-- Users Table Card -->
   <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse text-sm" id="usersTable">
+      <table class="w-full text-left border-collapse text-sm">
         <thead>
           <tr class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold border-b border-slate-200">
-            <th class="py-3.5 px-6 w-16">STT</th>
-            <th class="py-3.5 px-6">Mã Nhân Viên</th>
+            <th class="py-3.5 px-6 w-16 text-center">STT</th>
+            <th class="py-3.5 px-6">Mã Người Dùng</th>
             <th class="py-3.5 px-6">Họ Và Tên</th>
             <th class="py-3.5 px-6">Phòng Ban</th>
             <th class="py-3.5 px-6">Vai Trò Hệ Thống</th>
+            <th class="py-3.5 px-6 text-center w-28">Thao Tác</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
           <% if (users && users.length > 0) { %>
             <% users.forEach((u, idx) => { %>
-              <tr class="user-row hover:bg-slate-50/80 transition-colors" 
-                  data-role="<%= u.role %>"
-                  data-search="<%= (u.code + ' ' + u.full_name + ' ' + (u.department || '')).toLowerCase() %>">
-                <td class="py-4 px-6 text-slate-500 font-mono text-xs"><%= idx + 1 %></td>
+              <% const rowNumber = ((pagination.currentPage - 1) * pagination.pageSize) + idx + 1; %>
+              <% const currentRole = (u.role || '').toLowerCase(); %>
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="py-4 px-6 text-center text-slate-500 font-mono text-xs"><%= rowNumber %></td>
                 <td class="py-4 px-6 font-mono font-bold text-sky-700">
                   <span class="px-2.5 py-1 rounded-lg bg-sky-50 text-sky-700 border border-sky-200 font-bold text-xs">
                     <%= u.code %>
@@ -63,62 +104,199 @@
                 <td class="py-4 px-6 font-bold text-slate-900"><%= u.full_name %></td>
                 <td class="py-4 px-6 text-slate-600 text-xs"><%= u.department || 'N/A' %></td>
                 <td class="py-4 px-6">
-                  <% if (u.role === 'CREATOR') { %>
+                  <% if (currentRole === 'creator') { %>
                     <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 inline-flex items-center">
                       <i class="fa-solid fa-pen-nib mr-1.5 text-blue-500"></i> Người Lập Phiếu
                     </span>
-                  <% } else if (u.role === 'KEEPER') { %>
+                  <% } else if (currentRole === 'keeper') { %>
                     <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 inline-flex items-center">
                       <i class="fa-solid fa-boxes-stacked mr-1.5 text-amber-500"></i> Thủ Kho
                     </span>
-                  <% } else if (u.role === 'ACCOUNTANT') { %>
+                  <% } else if (currentRole === 'accountant') { %>
                     <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200 inline-flex items-center">
                       <i class="fa-solid fa-calculator mr-1.5 text-purple-500"></i> Kế Toán Trưởng
                     </span>
+                  <% } else { %>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                      <%= u.role %>
+                    </span>
                   <% } %>
+                </td>
+                <td class="py-4 px-6 text-center">
+                  <div class="flex items-center justify-center space-x-2">
+                    <button onclick="openEditModal('<%= u.id %>', '<%= u.code %>', '<%= u.full_name %>', '<%= u.department || '' %>', '<%= currentRole %>')" 
+                            class="p-2 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-all" title="Chỉnh sửa">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <form method="POST" action="/master/users/<%= u.id %>/delete" onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng <%= u.code %> - <%= u.full_name %> không?')" class="inline">
+                      <button type="submit" class="p-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Xóa">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                    </form>
+                  </div>
                 </td>
               </tr>
             <% }) %>
           <% } else { %>
             <tr>
-              <td colspan="5" class="py-12 text-center text-slate-400">
-                Chưa có dữ liệu người dùng / nhân viên.
+              <td colspan="6" class="py-12 text-center text-slate-400">
+                <i class="fa-solid fa-users-slash text-4xl mb-3 block text-slate-300"></i>
+                Không tìm thấy dữ liệu người dùng phù hợp.
               </td>
             </tr>
           <% } %>
         </tbody>
       </table>
     </div>
+
+    <!-- Pagination Footer -->
+    <% if (pagination && pagination.totalPages > 1) { %>
+      <div class="px-6 py-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-xs text-slate-500">
+          Hiển thị trang <span class="font-bold text-slate-800"><%= pagination.currentPage %></span> / <span class="font-bold text-slate-800"><%= pagination.totalPages %></span> (Tổng <span class="font-bold text-slate-800"><%= pagination.totalItems %></span> bản ghi)
+        </div>
+        <div class="flex items-center space-x-1">
+          <% if (pagination.currentPage > 1) { %>
+            <a href="/master/users?page=<%= pagination.currentPage - 1 %>&keyword=<%= encodeURIComponent(keyword || '') %>&role=<%= encodeURIComponent(roleFilter || '') %>" class="px-3 py-1.5 border border-slate-300 text-slate-600 rounded-lg text-xs font-medium hover:bg-slate-50 transition-all">
+              <i class="fa-solid fa-chevron-left mr-1"></i> Trắc
+            </a>
+          <% } %>
+
+          <% for (let p = 1; p <= pagination.totalPages; p++) { %>
+            <a href="/master/users?page=<%= p %>&keyword=<%= encodeURIComponent(keyword || '') %>&role=<%= encodeURIComponent(roleFilter || '') %>" 
+               class="px-3 py-1.5 border text-xs font-medium rounded-lg transition-all <%= p === pagination.currentPage ? 'bg-sky-600 border-sky-600 text-white font-bold' : 'border-slate-300 text-slate-600 hover:bg-slate-50' %>">
+              <%= p %>
+            </a>
+          <% } %>
+
+          <% if (pagination.currentPage < pagination.totalPages) { %>
+            <a href="/master/users?page=<%= pagination.currentPage + 1 %>&keyword=<%= encodeURIComponent(keyword || '') %>&role=<%= encodeURIComponent(roleFilter || '') %>" class="px-3 py-1.5 border border-slate-300 text-slate-600 rounded-lg text-xs font-medium hover:bg-slate-50 transition-all">
+              Sau <i class="fa-solid fa-chevron-right ml-1"></i>
+            </a>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
   </div>
 
 </div>
 
+<!-- Create User Modal -->
+<div id="createUserModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
+    <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+      <h3 class="font-bold text-slate-800 text-base flex items-center">
+        <i class="fa-solid fa-user-plus text-sky-600 mr-2"></i> Thêm Người Dùng Mới
+      </h3>
+      <button onclick="closeCreateModal()" class="text-slate-400 hover:text-slate-600">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+    <form method="POST" action="/master/users" class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Mã Người Dùng / NV <span class="text-rose-500">*</span></label>
+        <input type="text" name="code" required placeholder="VD: NV-005" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Họ Và Tên <span class="text-rose-500">*</span></label>
+        <input type="text" name="full_name" required placeholder="VD: Nguyễn Văn Anh" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Phòng Ban</label>
+        <input type="text" name="department" placeholder="VD: Phòng Kế Toán" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Vai Trò Hệ Thống <span class="text-rose-500">*</span></label>
+        <select name="role" required class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+          <option value="creator">Người lập phiếu (creator)</option>
+          <option value="keeper">Thủ kho (keeper)</option>
+          <option value="accountant">Kế toán trưởng (accountant)</option>
+        </select>
+      </div>
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-end space-x-3">
+        <button type="button" onclick="closeCreateModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-xl transition-all">Hủy</button>
+        <button type="submit" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-medium text-sm rounded-xl shadow-md shadow-sky-500/20 transition-all">Lưu Người Dùng</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editUserModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
+    <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+      <h3 class="font-bold text-slate-800 text-base flex items-center">
+        <i class="fa-solid fa-user-pen text-sky-600 mr-2"></i> Chỉnh Sửa Người Dùng
+      </h3>
+      <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+    <form id="editUserForm" method="POST" action="" class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Mã Người Dùng / NV <span class="text-rose-500">*</span></label>
+        <input type="text" id="edit_code" name="code" required class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Họ Và Tên <span class="text-rose-500">*</span></label>
+        <input type="text" id="edit_full_name" name="full_name" required class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Phòng Ban</label>
+        <input type="text" id="edit_department" name="department" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Vai Trò Hệ Thống <span class="text-rose-500">*</span></label>
+        <select id="edit_role" name="role" required class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+          <option value="creator">Người lập phiếu (creator)</option>
+          <option value="keeper">Thủ kho (keeper)</option>
+          <option value="accountant">Kế toán trưởng (accountant)</option>
+        </select>
+      </div>
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-end space-x-3">
+        <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-xl transition-all">Hủy</button>
+        <button type="submit" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-medium text-sm rounded-xl shadow-md shadow-sky-500/20 transition-all">Cập Nhật</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const keywordInput = document.getElementById('userSearchKeyword');
-    const roleFilter = document.getElementById('userRoleFilter');
-    const rows = document.querySelectorAll('.user-row');
+  function openCreateModal() {
+    const modal = document.getElementById('createUserModal');
+    modal?.classList.remove('hidden');
+    modal?.classList.add('flex');
+  }
 
-    function filterUsers() {
-      const keyword = keywordInput?.value.toLowerCase().trim() || '';
-      const role = roleFilter?.value || '';
+  function closeCreateModal() {
+    const modal = document.getElementById('createUserModal');
+    modal?.classList.add('hidden');
+    modal?.classList.remove('flex');
+  }
 
-      rows.forEach(row => {
-        const searchStr = row.dataset.search || '';
-        const rowRole = row.dataset.role || '';
-
-        const matchKeyword = !keyword || searchStr.includes(keyword);
-        const matchRole = !role || rowRole === role;
-
-        if (matchKeyword && matchRole) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
+  function openEditModal(id, code, fullName, department, role) {
+    const form = document.getElementById('editUserForm');
+    if (form) {
+      form.action = `/master/users/${id}/update`;
     }
+    const codeInput = document.getElementById('edit_code');
+    const nameInput = document.getElementById('edit_full_name');
+    const deptInput = document.getElementById('edit_department');
+    const roleSelect = document.getElementById('edit_role');
 
-    keywordInput?.addEventListener('input', filterUsers);
-    roleFilter?.addEventListener('change', filterUsers);
-  });
+    if (codeInput) codeInput.value = code;
+    if (nameInput) nameInput.value = fullName;
+    if (deptInput) deptInput.value = department;
+    if (roleSelect) roleSelect.value = role.toLowerCase();
+
+    const modal = document.getElementById('editUserModal');
+    modal?.classList.remove('hidden');
+    modal?.classList.add('flex');
+  }
+
+  function closeEditModal() {
+    const modal = document.getElementById('editUserModal');
+    modal?.classList.add('hidden');
+    modal?.classList.remove('flex');
+  }
 </script>
