@@ -30,7 +30,7 @@ router.get('/', async (req, res, next) => {
       stats: {
         totalReceipts: receipts.length,
         totalAmount,
-        itemsCount: items.length,
+        itemsCount: items.totalItems,
         warehousesCount: warehouses.length,
         suppliersCount: suppliers.totalItems,
       },

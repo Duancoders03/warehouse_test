@@ -1,45 +1,111 @@
+import { Op } from 'sequelize';
 import { Item } from '../models/item.model';
-import { ItemDto, CreateItemDto } from '../dtos/item.dto';
-
-export const MOCK_ITEMS: ItemDto[] = [
-  { id: 'i-1', code: 'VT-THEP-01', name: 'Thép phi 12 Hòa Phát', specifications: 'Thép cuộn CB300-V, Ø12mm, chuẩn ISO 9001', unit_id: '11111111-1111-1111-1111-111111111101' },
-  { id: 'i-2', code: 'VT-CAP-02', name: 'Cáp điện Cadivi 2x2.5mm', specifications: 'Cáp đồng bọc nhựa PVC 450/750V', unit_id: '11111111-1111-1111-1111-111111111103' },
-  { id: 'i-3', code: 'VT-APT-03', name: 'Aptomat 3 Pha 63A Schneider', specifications: 'MCCB EasyPact EZC100N3063, 3P 63A 18kA', unit_id: '11111111-1111-1111-1111-111111111102' },
-  { id: 'i-4', code: 'VT-DEN-04', name: 'Đèn LED Panel Rạng Đông 60x60', specifications: 'Công suất 40W, ánh sáng trắng 6500K', unit_id: '11111111-1111-1111-1111-111111111102' },
-  { id: 'i-5', code: 'VT-BANG-05', name: 'Băng keo cách điện 3M', specifications: 'Cuộn 18mm x 10m chịu nhiệt 80°C', unit_id: '11111111-1111-1111-1111-111111111106' },
-];
+import { Unit } from '../../unit/models/unit.model';
+import { ItemDto, CreateItemDto, UpdateItemDto } from '../dtos/item.dto';
+import { handleSequelizeValidationError } from '../../../utils/error-handler';
+import { getPaginationParams, PaginatedResult } from '../../../utils/pagination';
 
 export class ItemService {
-  async getItems(): Promise<ItemDto[]> {
-    try {
-      const list = await Item.findAll({ order: [['code', 'ASC']] });
-      if (list && list.length > 0) {
-        return list.map(item => item.toJSON() as ItemDto);
-      }
-    } catch {
-      // Fallback
+  async getItems(query?: { keyword?: string; page?: number; limit?: number }): Promise<PaginatedResult<ItemDto>> {
+    const { page, limit, offset } = getPaginationParams(query?.page, query?.limit, 10);
+    const keyword = query?.keyword;
+
+    const whereClause: any = {};
+    if (keyword && keyword.trim()) {
+      const q = `%${keyword.trim().toLowerCase()}%`;
+      whereClause[Op.or] = [
+        { code: { [Op.iLike]: q } },
+        { name: { [Op.iLike]: q } },
+        { specifications: { [Op.iLike]: q } },
+      ];
     }
-    return MOCK_ITEMS;
+
+    const { count, rows } = await Item.findAndCountAll({
+      where: whereClause,
+      include: [{ model: Unit, as: 'unit' }],
+      order: [['code', 'ASC']],
+      limit,
+      offset,
+    });
+
+    const items = rows.map(item => item.toJSON() as ItemDto);
+    const totalPages = Math.ceil(count / limit) || 1;
+
+    return {
+      items,
+      totalItems: count,
+      currentPage: page,
+      totalPages,
+      pageSize: limit,
+    };
+  }
+
+  async getAllItemsList(): Promise<ItemDto[]> {
+    const rows = await Item.findAll({
+      include: [{ model: Unit, as: 'unit' }],
+      order: [['code', 'ASC']],
+    });
+    return rows.map(item => item.toJSON() as ItemDto);
   }
 
   async getItemById(id: string): Promise<ItemDto | null> {
-    try {
-      const item = await Item.findByPk(id);
-      if (item) return item.toJSON() as ItemDto;
-    } catch {
-      // Fallback
-    }
-    return MOCK_ITEMS.find(i => i.id === id) || null;
+    const item = await Item.findByPk(id, {
+      include: [{ model: Unit, as: 'unit' }],
+    });
+    return item ? (item.toJSON() as ItemDto) : null;
   }
 
   async createItem(dto: CreateItemDto): Promise<ItemDto> {
-    const item = await Item.create({
-      code: dto.code.toUpperCase().trim(),
-      name: dto.name.trim(),
-      specifications: dto.specifications?.trim(),
-      unit_id: dto.unit_id,
-    });
-    return item.toJSON() as ItemDto;
+    try {
+      const item = await Item.create({
+        code: dto.code.toUpperCase().trim(),
+        name: dto.name.trim(),
+        specifications: dto.specifications?.trim(),
+        unit_id: dto.unit_id,
+      });
+
+      const createdItem = await Item.findByPk(item.id, {
+        include: [{ model: Unit, as: 'unit' }],
+      });
+      return createdItem!.toJSON() as ItemDto;
+    } catch (error: any) {
+      handleSequelizeValidationError(error);
+      throw error;
+    }
+  }
+
+  async updateItem(id: string, dto: UpdateItemDto): Promise<ItemDto> {
+    const item = await Item.findByPk(id);
+    if (!item) {
+      throw new Error('Không tìm thấy vật tư/hàng hóa cần cập nhật.');
+    }
+
+    try {
+      if (dto.code) item.code = dto.code.toUpperCase().trim();
+      if (dto.name) item.name = dto.name.trim();
+      if (dto.specifications !== undefined) item.specifications = dto.specifications.trim();
+      if (dto.unit_id) item.unit_id = dto.unit_id;
+
+      await item.save();
+
+      const updatedItem = await Item.findByPk(id, {
+        include: [{ model: Unit, as: 'unit' }],
+      });
+      return updatedItem!.toJSON() as ItemDto;
+    } catch (error: any) {
+      handleSequelizeValidationError(error);
+      throw error;
+    }
+  }
+
+  async deleteItem(id: string): Promise<boolean> {
+    const item = await Item.findByPk(id);
+    if (!item) {
+      throw new Error('Không tìm thấy vật tư/hàng hóa cần xóa.');
+    }
+
+    await item.destroy();
+    return true;
   }
 }
 

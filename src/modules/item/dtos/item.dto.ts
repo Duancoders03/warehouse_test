@@ -9,9 +9,6 @@ export interface ItemDto {
   unit?: UnitDto;
 }
 
-export interface CreateItemDto {
-  code: string;
-  name: string;
-  specifications?: string;
-  unit_id: string;
-}
+export type CreateItemDto = Omit<ItemDto, 'id' | 'unit'>;
+
+export type UpdateItemDto = Partial<CreateItemDto>;

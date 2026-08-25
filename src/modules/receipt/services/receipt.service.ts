@@ -1,6 +1,5 @@
 import { InventoryReceiptDto, CreateReceiptDto } from '../dtos/receipt.dto';
 import { MOCK_EMPLOYEES } from '../../employee/services/employee.service';
-import { MOCK_ITEMS } from '../../item/services/item.service';
 
 const receiptsStore: InventoryReceiptDto[] = [
   {
@@ -30,9 +29,9 @@ const receiptsStore: InventoryReceiptDto[] = [
         receipt_id: 'rec-001',
         line_number: 1,
         item_id: 'i-1',
-        item_code: MOCK_ITEMS[0].code,
-        item_name: MOCK_ITEMS[0].name,
-        specifications: MOCK_ITEMS[0].specifications,
+        item_code: 'VT-THEP-01',
+        item_name: 'Thép phi 12 Hòa Phát (D12 CB300-V)',
+        specifications: 'Đường kính 12mm, chiều dài 11.7m',
         unit_id: 'u-1',
         unit_name: 'Kilôgam',
         warehouse_id: 'w-1',
@@ -47,9 +46,9 @@ const receiptsStore: InventoryReceiptDto[] = [
         receipt_id: 'rec-001',
         line_number: 2,
         item_id: 'i-3',
-        item_code: MOCK_ITEMS[2].code,
-        item_name: MOCK_ITEMS[2].name,
-        specifications: MOCK_ITEMS[2].specifications,
+        item_code: 'VT-CB-03',
+        item_name: 'Aptomat MCB Schneider 2P 32A',
+        specifications: 'Dòng định mức 32A, cắt ngắn mạch 4.5kA',
         unit_id: 'u-2',
         unit_name: 'Cái',
         warehouse_id: 'w-1',
@@ -88,9 +87,9 @@ const receiptsStore: InventoryReceiptDto[] = [
         receipt_id: 'rec-002',
         line_number: 1,
         item_id: 'i-2',
-        item_code: MOCK_ITEMS[1].code,
-        item_name: MOCK_ITEMS[1].name,
-        specifications: MOCK_ITEMS[1].specifications,
+        item_code: 'VT-CAP-02',
+        item_name: 'Cáp điện CADIVI 2x2.5mm2',
+        specifications: 'Cáp điện lực hạ thế 0.6/1kV',
         unit_id: 'u-3',
         unit_name: 'Mét',
         warehouse_id: 'w-2',
@@ -150,7 +149,6 @@ export class ReceiptService {
 
     let total_amount = 0;
     const details = dto.details.map((item, index) => {
-      const itemData = MOCK_ITEMS.find(i => i.id === item.item_id);
       const amount = Number(item.actual_quantity) * Number(item.unit_price);
       total_amount += amount;
 
@@ -159,9 +157,9 @@ export class ReceiptService {
         receipt_id: id,
         line_number: index + 1,
         item_id: item.item_id,
-        item_code: itemData?.code || 'N/A',
-        item_name: itemData?.name || 'Vật tư chưa chọn',
-        specifications: itemData?.specifications || '',
+        item_code: 'VT-CHON',
+        item_name: 'Vật tư nhập kho',
+        specifications: '',
         unit_id: item.unit_id,
         unit_name: 'Cái',
         warehouse_id: item.warehouse_id,
@@ -241,8 +239,6 @@ export function numberToVietnameseWords(amount: number): string {
     }
     if (ten !== 1 && unit === 5 && ten > 0) {
       res += 'lăm ';
-    } else if (ten === 0 && unit === 5) {
-      res += 'năm ';
     } else if (ten === 0 && unit === 5) {
       res += 'năm ';
     } else if (unit > 0 && !(ten > 0 && unit === 1)) {
