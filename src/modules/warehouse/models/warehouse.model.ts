@@ -1,11 +1,23 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, Optional } from 'sequelize';
 import { sequelize } from '../../../config/database';
 
-export class Warehouse extends Model {
-  public id!: string;
-  public code!: string;
-  public name!: string;
-  public address!: string;
+export interface WarehouseAttributes {
+  id: string;
+  code: string;
+  name: string;
+  address?: string;
+}
+
+export interface WarehouseCreationAttributes extends Optional<WarehouseAttributes, 'id' | 'address'> {}
+
+export class Warehouse
+  extends Model<WarehouseAttributes, WarehouseCreationAttributes>
+  implements WarehouseAttributes
+{
+  declare id: string;
+  declare code: string;
+  declare name: string;
+  declare address: string;
 }
 
 Warehouse.init(

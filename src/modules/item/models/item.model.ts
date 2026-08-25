@@ -1,12 +1,25 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, Optional } from 'sequelize';
 import { sequelize } from '../../../config/database';
 
-export class Item extends Model {
-  public id!: string;
-  public code!: string;
-  public name!: string;
-  public specifications!: string;
-  public unit_id!: string;
+export interface ItemAttributes {
+  id: string;
+  code: string;
+  name: string;
+  specifications?: string;
+  unit_id: string;
+}
+
+export interface ItemCreationAttributes extends Optional<ItemAttributes, 'id' | 'specifications'> {}
+
+export class Item
+  extends Model<ItemAttributes, ItemCreationAttributes>
+  implements ItemAttributes
+{
+  declare id: string;
+  declare code: string;
+  declare name: string;
+  declare specifications: string;
+  declare unit_id: string;
 }
 
 Item.init(

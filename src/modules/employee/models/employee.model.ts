@@ -1,13 +1,27 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, Optional } from 'sequelize';
 import { sequelize } from '../../../config/database';
 
-export class Employee extends Model {
-  public id!: string;
-  public code!: string;
-  public full_name!: string;
-  public department!: string;
-  public role!: 'CREATOR' | 'KEEPER' | 'ACCOUNTANT';
-  public warehouse_id!: string;
+export interface EmployeeAttributes {
+  id: string;
+  code: string;
+  full_name: string;
+  department?: string;
+  role: 'CREATOR' | 'KEEPER' | 'ACCOUNTANT';
+  warehouse_id?: string;
+}
+
+export interface EmployeeCreationAttributes extends Optional<EmployeeAttributes, 'id' | 'department' | 'warehouse_id'> {}
+
+export class Employee
+  extends Model<EmployeeAttributes, EmployeeCreationAttributes>
+  implements EmployeeAttributes
+{
+  declare id: string;
+  declare code: string;
+  declare full_name: string;
+  declare department: string;
+  declare role: 'CREATOR' | 'KEEPER' | 'ACCOUNTANT';
+  declare warehouse_id: string;
 }
 
 Employee.init(

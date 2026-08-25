@@ -1,12 +1,25 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, Optional } from 'sequelize';
 import { sequelize } from '../../../config/database';
 
-export class Supplier extends Model {
-  public id!: string;
-  public code!: string;
-  public name!: string;
-  public address!: string;
-  public tax_code!: string;
+export interface SupplierAttributes {
+  id: string;
+  code: string;
+  name: string;
+  address?: string;
+  tax_code?: string;
+}
+
+export interface SupplierCreationAttributes extends Optional<SupplierAttributes, 'id' | 'address' | 'tax_code'> {}
+
+export class Supplier
+  extends Model<SupplierAttributes, SupplierCreationAttributes>
+  implements SupplierAttributes
+{
+  declare id: string;
+  declare code: string;
+  declare name: string;
+  declare address: string;
+  declare tax_code: string;
 }
 
 Supplier.init(

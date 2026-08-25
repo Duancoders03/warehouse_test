@@ -1,22 +1,61 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, Optional } from 'sequelize';
 import { sequelize } from '../../../config/database';
 
-export class InventoryReceipt extends Model {
-  public id!: string;
-  public receipt_no!: string;
-  public receipt_date!: Date;
-  public original_document_no!: string;
-  public original_document_date!: Date;
-  public deliverer_name!: string;
-  public supplier_id!: string;
-  public warehouse_id!: string;
-  public debit_account!: string;
-  public credit_account!: string;
-  public total_amount!: number;
-  public created_by_id!: string;
-  public keeper_id!: string;
-  public accountant_id!: string;
-  public created_at!: Date;
+export interface InventoryReceiptAttributes {
+  id: string;
+  receipt_no: string;
+  receipt_date: Date | string;
+  original_document_no?: string;
+  original_document_date?: Date | string;
+  deliverer_name?: string;
+  supplier_id?: string;
+  warehouse_id?: string;
+  debit_account?: string;
+  credit_account?: string;
+  total_amount?: number;
+  created_by_id: string;
+  keeper_id?: string;
+  accountant_id?: string;
+  created_at?: Date;
+}
+
+export interface InventoryReceiptCreationAttributes
+  extends Optional<
+    InventoryReceiptAttributes,
+    | 'id'
+    | 'receipt_date'
+    | 'original_document_no'
+    | 'original_document_date'
+    | 'deliverer_name'
+    | 'supplier_id'
+    | 'warehouse_id'
+    | 'debit_account'
+    | 'credit_account'
+    | 'total_amount'
+    | 'keeper_id'
+    | 'accountant_id'
+    | 'created_at'
+  > {}
+
+export class InventoryReceipt
+  extends Model<InventoryReceiptAttributes, InventoryReceiptCreationAttributes>
+  implements InventoryReceiptAttributes
+{
+  declare id: string;
+  declare receipt_no: string;
+  declare receipt_date: Date | string;
+  declare original_document_no: string;
+  declare original_document_date: Date | string;
+  declare deliverer_name: string;
+  declare supplier_id: string;
+  declare warehouse_id: string;
+  declare debit_account: string;
+  declare credit_account: string;
+  declare total_amount: number;
+  declare created_by_id: string;
+  declare keeper_id: string;
+  declare accountant_id: string;
+  declare created_at: Date;
 }
 
 InventoryReceipt.init(
