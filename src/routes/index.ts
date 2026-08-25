@@ -2,7 +2,7 @@ import { Router } from 'express';
 import unitRoutes from '../modules/unit/routes/unit.routes';
 import warehouseRoutes from '../modules/warehouse/routes/warehouse.routes';
 import supplierRoutes from '../modules/supplier/routes/supplier.routes';
-import employeeRoutes from '../modules/employee/routes/employee.routes';
+import userRoutes from '../modules/user/routes/user.routes';
 import itemRoutes from '../modules/item/routes/item.routes';
 import receiptRoutes from '../modules/receipt/routes/receipt.routes';
 
@@ -46,7 +46,7 @@ router.get('/', async (req, res, next) => {
 router.use(unitRoutes);
 router.use(warehouseRoutes);
 router.use(supplierRoutes);
-router.use(employeeRoutes);
+router.use(userRoutes);
 router.use(itemRoutes);
 router.use(receiptRoutes);
 

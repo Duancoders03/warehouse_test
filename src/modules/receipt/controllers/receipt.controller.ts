@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { receiptService, numberToVietnameseWords } from '../services/receipt.service';
 import { warehouseService } from '../../warehouse/services/warehouse.service';
 import { supplierService } from '../../supplier/services/supplier.service';
-import { employeeService } from '../../employee/services/employee.service';
+import { userService } from '../../user/services/user.service';
 import { itemService } from '../../item/services/item.service';
 import { unitService } from '../../unit/services/unit.service';
 import { env } from '../../../config/environment';
@@ -35,9 +35,9 @@ export class ReceiptController {
       const suppliers = await supplierService.getSuppliers();
       const items = await itemService.getItems();
       const units = await unitService.getUnits();
-      const creators = await employeeService.getEmployees('CREATOR');
-      const keepers = await employeeService.getEmployees('KEEPER');
-      const accountants = await employeeService.getEmployees('ACCOUNTANT');
+      const creators = await userService.getUsers('CREATOR');
+      const keepers = await userService.getUsers('KEEPER');
+      const accountants = await userService.getUsers('ACCOUNTANT');
 
       const nextReceiptNo = receiptService.generateNextReceiptNo();
       const todayStr = new Date().toISOString().split('T')[0];

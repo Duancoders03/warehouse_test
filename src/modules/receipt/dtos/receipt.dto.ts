@@ -1,7 +1,7 @@
 import { UnitDto } from '../../unit/dtos/unit.dto';
 import { WarehouseDto } from '../../warehouse/dtos/warehouse.dto';
 import { SupplierDto } from '../../supplier/dtos/supplier.dto';
-import { EmployeeDto } from '../../employee/dtos/employee.dto';
+import { UserDto } from '../../user/dtos/user.dto';
 
 export interface InventoryReceiptDetailDto {
   id?: string;
@@ -36,11 +36,11 @@ export interface InventoryReceiptDto {
   credit_account?: string;
   total_amount: number;
   created_by_id: string;
-  created_by?: EmployeeDto;
+  created_by?: UserDto;
   keeper_id?: string;
-  keeper?: EmployeeDto;
+  keeper?: UserDto;
   accountant_id?: string;
-  accountant?: EmployeeDto;
+  accountant?: UserDto;
   details: InventoryReceiptDetailDto[];
   created_at?: string;
 }

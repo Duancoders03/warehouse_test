@@ -1,0 +1,124 @@
+<div class="space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-4">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900">Danh Mục Người Dùng / Vai Trò</h1>
+      <p class="text-sm text-slate-500 mt-1">Quản lý danh sách nhân sự thực hiện các vai trò: Người lập phiếu, Thủ kho và Kế toán trưởng</p>
+    </div>
+  </div>
+
+  <!-- Filter & Search Bar -->
+  <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      
+      <!-- Search Keyword -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Tìm Kiếm Nhanh</label>
+        <div class="relative">
+          <input type="text" id="userSearchKeyword" placeholder="Mã NV, họ tên, phòng ban..." class="w-full text-sm pl-9 pr-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+        </div>
+      </div>
+
+      <!-- Role Filter -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Lọc Theo Vai Trò</label>
+        <select id="userRoleFilter" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+          <option value="">-- Tất cả vai trò --</option>
+          <option value="CREATOR">Người lập phiếu (CREATOR)</option>
+          <option value="KEEPER">Thủ kho (KEEPER)</option>
+          <option value="ACCOUNTANT">Kế toán trưởng (ACCOUNTANT)</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Users Table -->
+  <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse text-sm" id="usersTable">
+        <thead>
+          <tr class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold border-b border-slate-200">
+            <th class="py-3.5 px-6 w-16">STT</th>
+            <th class="py-3.5 px-6">Mã Nhân Viên</th>
+            <th class="py-3.5 px-6">Họ Và Tên</th>
+            <th class="py-3.5 px-6">Phòng Ban</th>
+            <th class="py-3.5 px-6">Vai Trò Hệ Thống</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% if (users && users.length > 0) { %>
+            <% users.forEach((u, idx) => { %>
+              <tr class="user-row hover:bg-slate-50/80 transition-colors" 
+                  data-role="<%= u.role %>"
+                  data-search="<%= (u.code + ' ' + u.full_name + ' ' + (u.department || '')).toLowerCase() %>">
+                <td class="py-4 px-6 text-slate-500 font-mono text-xs"><%= idx + 1 %></td>
+                <td class="py-4 px-6 font-mono font-bold text-sky-700">
+                  <span class="px-2.5 py-1 rounded-lg bg-sky-50 text-sky-700 border border-sky-200 font-bold text-xs">
+                    <%= u.code %>
+                  </span>
+                </td>
+                <td class="py-4 px-6 font-bold text-slate-900"><%= u.full_name %></td>
+                <td class="py-4 px-6 text-slate-600 text-xs"><%= u.department || 'N/A' %></td>
+                <td class="py-4 px-6">
+                  <% if (u.role === 'CREATOR') { %>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 inline-flex items-center">
+                      <i class="fa-solid fa-pen-nib mr-1.5 text-blue-500"></i> Người Lập Phiếu
+                    </span>
+                  <% } else if (u.role === 'KEEPER') { %>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 inline-flex items-center">
+                      <i class="fa-solid fa-boxes-stacked mr-1.5 text-amber-500"></i> Thủ Kho
+                    </span>
+                  <% } else if (u.role === 'ACCOUNTANT') { %>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200 inline-flex items-center">
+                      <i class="fa-solid fa-calculator mr-1.5 text-purple-500"></i> Kế Toán Trưởng
+                    </span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="5" class="py-12 text-center text-slate-400">
+                Chưa có dữ liệu người dùng / nhân viên.
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const keywordInput = document.getElementById('userSearchKeyword');
+    const roleFilter = document.getElementById('userRoleFilter');
+    const rows = document.querySelectorAll('.user-row');
+
+    function filterUsers() {
+      const keyword = keywordInput?.value.toLowerCase().trim() || '';
+      const role = roleFilter?.value || '';
+
+      rows.forEach(row => {
+        const searchStr = row.dataset.search || '';
+        const rowRole = row.dataset.role || '';
+
+        const matchKeyword = !keyword || searchStr.includes(keyword);
+        const matchRole = !role || rowRole === role;
+
+        if (matchKeyword && matchRole) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    keywordInput?.addEventListener('input', filterUsers);
+    roleFilter?.addEventListener('change', filterUsers);
+  });
+</script>
