@@ -4,12 +4,6 @@ export interface UnitDto {
   name: string;
 }
 
-export interface CreateUnitDto {
-  code: string;
-  name: string;
-}
+export type CreateUnitDto = Omit<UnitDto, 'id'>;
 
-export interface UpdateUnitDto {
-  code?: string;
-  name?: string;
-}
+export type UpdateUnitDto = Partial<CreateUnitDto>;

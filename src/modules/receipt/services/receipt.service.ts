@@ -1,6 +1,5 @@
 import { InventoryReceiptDto, CreateReceiptDto } from '../dtos/receipt.dto';
 import { MOCK_SUPPLIERS } from '../../supplier/services/supplier.service';
-import { MOCK_WAREHOUSES } from '../../warehouse/services/warehouse.service';
 import { MOCK_EMPLOYEES } from '../../employee/services/employee.service';
 import { MOCK_ITEMS } from '../../item/services/item.service';
 
@@ -15,7 +14,7 @@ const receiptsStore: InventoryReceiptDto[] = [
     supplier_id: 's-1',
     supplier: MOCK_SUPPLIERS[0],
     warehouse_id: 'w-1',
-    warehouse: MOCK_WAREHOUSES[0],
+    warehouse: { id: 'w-1', code: 'KHO-TONG', name: 'Kho Tổng Trung Tâm VIMES', address: 'TP.HCM' },
     debit_account: '152',
     credit_account: '331',
     total_amount: 154500000,
@@ -38,7 +37,7 @@ const receiptsStore: InventoryReceiptDto[] = [
         unit_id: 'u-1',
         unit_name: 'Kilôgam',
         warehouse_id: 'w-1',
-        warehouse_name: MOCK_WAREHOUSES[0].name,
+        warehouse_name: 'Kho Tổng Trung Tâm VIMES',
         document_quantity: 5000,
         actual_quantity: 5000,
         unit_price: 24500,
@@ -55,7 +54,7 @@ const receiptsStore: InventoryReceiptDto[] = [
         unit_id: 'u-2',
         unit_name: 'Cái',
         warehouse_id: 'w-1',
-        warehouse_name: MOCK_WAREHOUSES[0].name,
+        warehouse_name: 'Kho Tổng Trung Tâm VIMES',
         document_quantity: 40,
         actual_quantity: 40,
         unit_price: 800000,
@@ -73,7 +72,7 @@ const receiptsStore: InventoryReceiptDto[] = [
     supplier_id: 's-2',
     supplier: MOCK_SUPPLIERS[1],
     warehouse_id: 'w-2',
-    warehouse: MOCK_WAREHOUSES[1],
+    warehouse: { id: 'w-2', code: 'KHO-VT1', name: 'Kho Vật Tư 01 - Cầu Giấy', address: 'Hà Nội' },
     debit_account: '1521',
     credit_account: '1111',
     total_amount: 47500000,
@@ -96,7 +95,7 @@ const receiptsStore: InventoryReceiptDto[] = [
         unit_id: 'u-3',
         unit_name: 'Mét',
         warehouse_id: 'w-2',
-        warehouse_name: MOCK_WAREHOUSES[1].name,
+        warehouse_name: 'Kho Vật Tư 01 - Cầu Giấy',
         document_quantity: 1000,
         actual_quantity: 950,
         unit_price: 50000,
@@ -147,7 +146,6 @@ export class ReceiptService {
   async createReceipt(dto: CreateReceiptDto): Promise<InventoryReceiptDto> {
     const id = `rec-${Date.now()}`;
     const supplier = MOCK_SUPPLIERS.find(s => s.id === dto.supplier_id);
-    const warehouse = MOCK_WAREHOUSES.find(w => w.id === dto.warehouse_id);
     const createdBy = MOCK_EMPLOYEES.find(e => e.id === dto.created_by_id);
     const keeper = MOCK_EMPLOYEES.find(e => e.id === dto.keeper_id);
     const accountant = MOCK_EMPLOYEES.find(e => e.id === dto.accountant_id);
@@ -155,7 +153,6 @@ export class ReceiptService {
     let total_amount = 0;
     const details = dto.details.map((item, index) => {
       const itemData = MOCK_ITEMS.find(i => i.id === item.item_id);
-      const rowWarehouse = MOCK_WAREHOUSES.find(w => w.id === item.warehouse_id) || warehouse;
       const amount = Number(item.actual_quantity) * Number(item.unit_price);
       total_amount += amount;
 
@@ -169,8 +166,8 @@ export class ReceiptService {
         specifications: itemData?.specifications || '',
         unit_id: item.unit_id,
         unit_name: 'Cái',
-        warehouse_id: rowWarehouse?.id,
-        warehouse_name: rowWarehouse?.name,
+        warehouse_id: item.warehouse_id,
+        warehouse_name: 'Kho mặc định',
         document_quantity: Number(item.document_quantity),
         actual_quantity: Number(item.actual_quantity),
         unit_price: Number(item.unit_price),
@@ -188,7 +185,6 @@ export class ReceiptService {
       supplier_id: dto.supplier_id,
       supplier,
       warehouse_id: dto.warehouse_id,
-      warehouse,
       debit_account: dto.debit_account || '152',
       credit_account: dto.credit_account || '331',
       total_amount,
