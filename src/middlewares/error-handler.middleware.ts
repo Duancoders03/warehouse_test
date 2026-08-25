@@ -6,7 +6,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Lỗi Hệ Thống Nội Bộ';
 
-  if (req.originalUrl.startsWith('/api/')) {
+  if (req.xhr || req.headers.accept?.includes('application/json')) {
     return res.status(statusCode).json({
       success: false,
       message,
@@ -15,7 +15,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
   }
 
   res.status(statusCode).render('pages/404', {
-    title: 'Đã xảy ra lỗi - 500',
+    title: 'Đã xảy ra lỗi',
     message,
     statusCode,
   });

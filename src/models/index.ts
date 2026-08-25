@@ -1,10 +1,10 @@
-import { Unit } from './Unit';
-import { Warehouse } from './Warehouse';
-import { Supplier } from './Supplier';
-import { Employee } from './Employee';
-import { Item } from './Item';
-import { InventoryReceipt } from './InventoryReceipt';
-import { InventoryReceiptDetail } from './InventoryReceiptDetail';
+import { Unit } from '../modules/unit/models/unit.model';
+import { Warehouse } from '../modules/warehouse/models/warehouse.model';
+import { Supplier } from '../modules/supplier/models/supplier.model';
+import { Employee } from '../modules/employee/models/employee.model';
+import { Item } from '../modules/item/models/item.model';
+import { InventoryReceipt } from '../modules/receipt/models/receipt.model';
+import { InventoryReceiptDetail } from '../modules/receipt/models/receipt-detail.model';
 
 // Relationships
 Unit.hasMany(Item, { foreignKey: 'unit_id', as: 'items' });

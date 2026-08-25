@@ -1,0 +1,112 @@
+import { Request, Response, NextFunction } from 'express';
+import { receiptService, numberToVietnameseWords } from '../services/receipt.service';
+import { warehouseService } from '../../warehouse/services/warehouse.service';
+import { supplierService } from '../../supplier/services/supplier.service';
+import { employeeService } from '../../employee/services/employee.service';
+import { itemService } from '../../item/services/item.service';
+import { unitService } from '../../unit/services/unit.service';
+import { env } from '../../../config/environment';
+
+export class ReceiptController {
+  // SSR View Render: GET /receipts
+  async renderReceiptList(req: Request, res: Response, next: NextFunction) {
+    try {
+      const receipts = await receiptService.getAllReceipts(req.query as any);
+      const warehouses = await warehouseService.getWarehouses();
+      const suppliers = await supplierService.getSuppliers();
+
+      res.render('receipt/views/list', {
+        title: 'Danh Sách Phiếu Nhập Kho',
+        currentNav: 'receipts',
+        receipts,
+        warehouses,
+        suppliers,
+        query: req.query,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  // SSR View Render: GET /receipts/create
+  async renderReceiptCreate(req: Request, res: Response, next: NextFunction) {
+    try {
+      const warehouses = await warehouseService.getWarehouses();
+      const suppliers = await supplierService.getSuppliers();
+      const items = await itemService.getItems();
+      const units = await unitService.getUnits();
+      const creators = await employeeService.getEmployees('CREATOR');
+      const keepers = await employeeService.getEmployees('KEEPER');
+      const accountants = await employeeService.getEmployees('ACCOUNTANT');
+
+      const nextReceiptNo = receiptService.generateNextReceiptNo();
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      res.render('receipt/views/create', {
+        title: 'Lập Phiếu Nhập Kho Mới (Mẫu 01-VT)',
+        currentNav: 'receipt-create',
+        nextReceiptNo,
+        todayStr,
+        warehouses,
+        suppliers,
+        items,
+        units,
+        creators,
+        keepers,
+        accountants,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  // SSR Form Action / AJAX Submit: POST /receipts/create
+  async handleCreateReceipt(req: Request, res: Response, next: NextFunction) {
+    try {
+      const newReceipt = await receiptService.createReceipt(req.body);
+      if (req.xhr || req.headers.accept?.includes('application/json')) {
+        return res.status(201).json({ success: true, data: newReceipt });
+      }
+      res.redirect(`/receipts/${newReceipt.id}`);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  // SSR View Render: GET /receipts/:id
+  async renderReceiptDetail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const receipt = await receiptService.getReceiptById(req.params.id as any);
+      if (!receipt) {
+        return res.status(404).render('pages/404', {
+          title: 'Không tìm thấy phiếu nhập',
+          message: `Không tìm thấy phiếu nhập kho với mã: ${req.params.id}`,
+        });
+      }
+
+      const totalAmountWords = numberToVietnameseWords(receipt.total_amount);
+
+      res.render('receipt/views/detail', {
+        title: `Mẫu 01-VT - ${receipt.receipt_no}`,
+        currentNav: 'receipts',
+        receipt,
+        totalAmountWords,
+        companyName: env.COMPANY_NAME,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  // SSR Delete Action: POST /receipts/:id/delete
+  async handleDeleteReceipt(req: Request, res: Response, next: NextFunction) {
+    try {
+      await receiptService.deleteReceipt(req.params.id as any);
+      res.redirect('/receipts');
+    } catch (err) {
+      next(err);
+    }
+  }
+}
+
+export const receiptController = new ReceiptController();

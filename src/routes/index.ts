@@ -1,15 +1,53 @@
 import { Router } from 'express';
-import receiptApi from './api/receipt.api';
-import masterDataApi from './api/master-data.api';
-import viewRoutes from './views/receipt.view';
+import unitRoutes from '../modules/unit/routes/unit.routes';
+import warehouseRoutes from '../modules/warehouse/routes/warehouse.routes';
+import supplierRoutes from '../modules/supplier/routes/supplier.routes';
+import employeeRoutes from '../modules/employee/routes/employee.routes';
+import itemRoutes from '../modules/item/routes/item.routes';
+import receiptRoutes from '../modules/receipt/routes/receipt.routes';
+
+import { receiptService } from '../modules/receipt/services/receipt.service';
+import { itemService } from '../modules/item/services/item.service';
+import { warehouseService } from '../modules/warehouse/services/warehouse.service';
+import { supplierService } from '../modules/supplier/services/supplier.service';
+import { env } from '../config/environment';
 
 const router = Router();
 
-// API Routes
-router.use('/api/receipts', receiptApi);
-router.use('/api/master-data', masterDataApi);
+// Root Dashboard Route
+router.get('/', async (req, res, next) => {
+  try {
+    const receipts = await receiptService.getAllReceipts();
+    const items = await itemService.getItems();
+    const warehouses = await warehouseService.getWarehouses();
+    const suppliers = await supplierService.getSuppliers();
 
-// View Routes
-router.use('/', viewRoutes);
+    const totalAmount = receipts.reduce((acc, r) => acc + (r.total_amount || 0), 0);
+
+    res.render('pages/dashboard', {
+      title: 'Trang Chủ & Tổng Quan Kho',
+      currentNav: 'dashboard',
+      stats: {
+        totalReceipts: receipts.length,
+        totalAmount,
+        itemsCount: items.length,
+        warehousesCount: warehouses.length,
+        suppliersCount: suppliers.length,
+      },
+      recentReceipts: receipts.slice(0, 5),
+      companyName: env.COMPANY_NAME,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Mount Module Routes
+router.use(unitRoutes);
+router.use(warehouseRoutes);
+router.use(supplierRoutes);
+router.use(employeeRoutes);
+router.use(itemRoutes);
+router.use(receiptRoutes);
 
 export default router;

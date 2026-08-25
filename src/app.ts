@@ -14,27 +14,30 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Configure View Engine (EJS)
+// Configure View Engine (EJS) - include root views & modules directory
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', [
+  path.join(__dirname, 'views'),
+  path.join(__dirname, 'modules'),
+]);
 
 // Custom Layout Engine Middleware
 app.use((req: Request, res: Response, next: NextFunction) => {
-  const originalRender = res.render;
-  res.render = function (view: string, options?: any, callback?: any) {
+  const originalRender = res.render.bind(res);
+  res.render = function (view: string, options?: any, callback?: any): void {
     const opts = options || {};
     
     // Skip layout for layout files themselves
     if (view.startsWith('layouts/')) {
-      return originalRender.call(this, view, opts, callback);
+      return originalRender(view, opts, callback);
     }
 
-    originalRender.call(this, view, opts, (err: Error | null, html: string) => {
+    originalRender(view, opts, (err: Error | null, html: string) => {
       if (err) {
         return next(err);
       }
       opts.body = html;
-      return originalRender.call(this, 'layouts/main', opts, callback);
+      return originalRender('layouts/main', opts, callback);
     });
   } as any;
   next();

@@ -1,9 +1,27 @@
-# THIẾT KẾ CẤU TRÚC FOLDER DỰ ÁN WAREHOUSE MANAGEMENT
+# THIẾT KẾ CẤU TRÚC FOLDER DỰ ÁN WAREHOUSE MANAGEMENT (MODULAR MVC)
 > **Công nghệ: Node.js + Express + TypeScript + tsx (esbuild) + Sequelize + EJS + Tailwind CSS CDN**
 
 ---
 
-## 1. CẤU TRÚC THƯ MỤC DỰ ÁN (PROJECT FOLDER STRUCTURE)
+## 1. MÔ HÌNH KIẾN TRÚC MODULAR MVC
+
+Dự án áp dụng kiến trúc **Modular MVC (Module-based Architecture)**. 
+Tất cả các tính năng nghiệp vụ (Domain Features) được chia nhỏ thành từng **Module độc lập** nằm trong `src/modules/`. Mỗi module đóng gói trọn vẹn các thành phần MVC:
+
+- **Model (`models/`)**: Khai báo Sequelize model & định nghĩa kiểu dữ liệu.
+- **Controller (`controllers/`)**: Tiếp nhận Request, gọi Service và trả về Response (JSON/Render View).
+- **Service (`services/`)**: Xử lý logic nghiệp vụ, tính toán & truy vấn CSDL qua Model.
+- **Routes (`routes/`)**: Khai báo routing cho API & SSR views thuộc về module đó.
+- **DTO (`dtos/`)**: Khai báo kiểu dữ liệu giao tiếp (Data Transfer Object) và Validation Schema.
+- **Views (`views/`)**: Chứa các file giao diện EJS riêng biệt thuộc về module đó (ví dụ: `units.ejs`, `warehouses.ejs`, `list.ejs`, `create.ejs`...).
+
+**Quy tắc phân chia View (EJS Templates):**
+- **View của module nào đặt trong module đó**: Ví dụ View quản lý ĐVT nằm ở `src/modules/unit/views/units.ejs`, View tạo phiếu nhập nằm ở `src/modules/receipt/views/create.ejs`.
+- **View dùng chung đặt tại root `src/views/`**: Bao gồm Layouts (`layouts/main.ejs`), Partials (`partials/header.ejs`, `partials/footer.ejs`), và các trang dùng chung toàn hệ thống (`dashboard.ejs`, `404.ejs`).
+
+---
+
+## 2. CẤU TRÚC THƯ MỤC DỰ ÁN (PROJECT FOLDER STRUCTURE)
 
 ```text
 manage-warehouse/
@@ -16,69 +34,130 @@ manage-warehouse/
 │
 ├── src/                         # Toàn bộ Mã nguồn TypeScript
 │   ├── server.ts                # File khởi chạy ứng dụng (Entry point)
-│   ├── app.ts                   # Cấu hình Express app, middlewares, routes
+│   ├── app.ts                   # Cấu hình Express app, middlewares, mount module routes
 │   │
 │   ├── config/                  # Cấu hình hệ thống & CSDL
 │   │   ├── database.ts          # Khởi tạo đối tượng Sequelize instance
 │   │   └── environment.ts       # Load & validate biến môi trường
 │   │
-│   ├── models/                  # Sequelize Models (Mô hình Dữ liệu)
-│   │   ├── index.ts             # Khởi tạo & liên kết mối quan hệ giữa các Models
-│   │   ├── Unit.ts              # Model Đơn vị tính
-│   │   ├── Warehouse.ts         # Model Kho hàng
-│   │   ├── Supplier.ts          # Model Nhà cung cấp
-│   │   ├── Employee.ts          # Model Nhân viên (Phân 3 vai trò: CREATOR, KEEPER, ACCOUNTANT)
-│   │   ├── Item.ts              # Model Vật tư / Hàng hóa
-│   │   ├── InventoryReceipt.ts  # Model Header Phiếu nhập kho (lưu created_by_id, keeper_id, accountant_id)
-│   │   └── InventoryReceiptDetail.ts # Model Detail Chi tiết vật tư (8 cột chuẩn Mẫu 01-VT)
-│   │
-│   ├── controllers/             # Tầng xử lý Request & Response
-│   │   ├── receipt.controller.ts # Xử lý các action liên quan tới Phiếu Nhập
-│   │   ├── master-data.controller.ts # API lấy danh mục vật tư, kho, ncc
-│   │   └── page.controller.ts   # Render các trang UI EJS
-│   │
-│   ├── services/                # Tầng Xử lý Nghiệp vụ (Business Logic)
-│   │   ├── receipt.service.ts   # Xử lý logic tạo phiếu, tính tiền, giao dịch DB
-│   │   └── item.service.ts      # Quản lý danh mục vật tư
-│   │
-│   ├── routes/                  # Định tuyến Express (Routing)
-│   │   ├── index.ts             # Tổng hợp Router
-│   │   ├── api/                 # API Routes (Dùng cho AJAX / REST API)
-│   │   │   ├── receipt.api.ts
-│   │   │   └── master-data.api.ts
-│   │   └── views/               # SSR View Routes (Render giao diện EJS)
-│   │       └── receipt.view.ts
-│   │
-│   ├── middlewares/             # Custom Middlewares
+│   ├── middlewares/             # Custom Middlewares dùng chung
 │   │   ├── error-handler.middleware.ts # Xử lý lỗi tập trung
-│   │   └── validate.middleware.ts     # Validate dữ liệu đầu vào
+│   │   └── validate.middleware.ts     # Middleware validate dữ liệu đầu vào
 │   │
-│   ├── dtos/                    # Data Transfer Objects & Interfaces
-│   │   ├── create-receipt.dto.ts
-│   │   └── receipt-response.dto.ts
+│   ├── models/                  # Central Model Aggregator (Liên kết các module models)
+│   │   └── index.ts             # Khởi tạo & nạp tất cả Models từ các modules, thiết lập mối quan hệ (Associations)
 │   │
-│   ├── views/                   # Giao diện EJS (Dùng Tailwind CSS CDN)
+│   ├── modules/                 # CÁC MODULE NGHIỆP VỤ (MODULAR MVC)
+│   │   │
+│   │   ├── unit/                # 1. Module Đơn vị tính (Unit of Measure)
+│   │   │   ├── controllers/
+│   │   │   │   └── unit.controller.ts
+│   │   │   ├── models/
+│   │   │   │   └── unit.model.ts
+│   │   │   ├── services/
+│   │   │   │   └── unit.service.ts
+│   │   │   ├── routes/
+│   │   │   │   └── unit.routes.ts
+│   │   │   ├── dtos/
+│   │   │   │   └── unit.dto.ts
+│   │   │   └── views/           # View riêng của Module Unit
+│   │   │       └── units.ejs
+│   │   │
+│   │   ├── warehouse/           # 2. Module Kho hàng (Warehouse)
+│   │   │   ├── controllers/
+│   │   │   │   └── warehouse.controller.ts
+│   │   │   ├── models/
+│   │   │   │   └── warehouse.model.ts
+│   │   │   ├── services/
+│   │   │   │   └── warehouse.service.ts
+│   │   │   ├── routes/
+│   │   │   │   └── warehouse.routes.ts
+│   │   │   ├── dtos/
+│   │   │   │   └── warehouse.dto.ts
+│   │   │   └── views/           # View riêng của Module Warehouse
+│   │   │       └── warehouses.ejs
+│   │   │
+│   │   ├── supplier/            # 3. Module Nhà cung cấp (Supplier)
+│   │   │   ├── controllers/
+│   │   │   │   └── supplier.controller.ts
+│   │   │   ├── models/
+│   │   │   │   └── supplier.model.ts
+│   │   │   ├── services/
+│   │   │   │   └── supplier.service.ts
+│   │   │   ├── routes/
+│   │   │   │   └── supplier.routes.ts
+│   │   │   ├── dtos/
+│   │   │   │   └── supplier.dto.ts
+│   │   │   └── views/           # View riêng của Module Supplier
+│   │   │       └── suppliers.ejs
+│   │   │
+│   │   ├── employee/            # 4. Module Nhân viên (Employee)
+│   │   │   ├── controllers/
+│   │   │   │   └── employee.controller.ts
+│   │   │   ├── models/
+│   │   │   │   └── employee.model.ts
+│   │   │   ├── services/
+│   │   │   │   └── employee.service.ts
+│   │   │   ├── routes/
+│   │   │   │   └── employee.routes.ts
+│   │   │   ├── dtos/
+│   │   │   │   └── employee.dto.ts
+│   │   │   └── views/           # View riêng của Module Employee
+│   │   │       └── employees.ejs
+│   │   │
+│   │   ├── item/                # 5. Module Vật tư / Hàng hóa (Item)
+│   │   │   ├── controllers/
+│   │   │   │   └── item.controller.ts
+│   │   │   ├── models/
+│   │   │   │   └── item.model.ts
+│   │   │   ├── services/
+│   │   │   │   └── item.service.ts
+│   │   │   ├── routes/
+│   │   │   │   └── item.routes.ts
+│   │   │   ├── dtos/
+│   │   │   │   └── item.dto.ts
+│   │   │   └── views/           # View riêng của Module Item
+│   │   │       └── items.ejs
+│   │   │
+│   │   └── receipt/             # 6. Module Phiếu nhập kho (Inventory Receipt)
+│   │       ├── controllers/
+│   │       │   └── receipt.controller.ts
+│   │       ├── models/
+│   │       │   ├── receipt.model.ts
+│   │       │   └── receipt-detail.model.ts
+│   │       ├── services/
+│   │       │   └── receipt.service.ts
+│   │       ├── routes/
+│   │       │   └── receipt.routes.ts
+│   │       ├── dtos/
+│   │       │   └── receipt.dto.ts
+│   │       └── views/           # Views riêng của Module Receipt
+│   │           ├── list.ejs     # Danh sách phiếu nhập kho
+│   │           ├── create.ejs   # Form tạo phiếu nhập (8 cột Mẫu 01-VT)
+│   │           └── detail.ejs   # Form in phiếu nhập
+│   │
+│   ├── routes/                  # Central Router (Gom các module routes)
+│   │   └── index.ts             # Tải và mount tất cả routes từ src/modules/*
+│   │
+│   ├── views/                   # GIAO DIỆN DÙNG CHUNG (SHARED VIEWS)
 │   │   ├── layouts/
-│   │   │   └── main.ejs         # Layout chung (Nhúng Tailwind CDN <script>)
+│   │   │   └── main.ejs         # Layout chính (Nhúng Tailwind CDN)
 │   │   ├── partials/
-│   │   │   ├── header.ejs       # Thanh điều hướng (Navbar)
-│   │   │   └── footer.ejs       # Chân trang
-│   │   └── pages/
-│   │       ├── receipts/
-│   │       │   ├── list.ejs     # Danh sách phiếu nhập kho
-│   │       │   ├── create.ejs   # Form nhập liệu Phiếu Nhập Kho (Bảng 8 cột)
-│   │       │   └── detail.ejs   # Mẫu in phiếu nhập kho (Mẫu 01-VT)
-│   │       └── 404.ejs
+│   │   │   ├── header.ejs       # Navbar điều hướng
+│   │   │   └── footer.ejs       # Footer
+│   │   └── pages/               # Trang chung dùng cho toàn hệ thống
+│   │       ├── dashboard.ejs    # Trang Tổng quan (Dashboard)
+│   │       └── 404.ejs          # Trang báo lỗi 404
 │   │
-│   └── public/                  # Các file tĩnh (Static Files)
-│       ├── js/                  # JS cho frontend (AJAX thêm dòng, tính tiền)
+│   └── public/                  # Asset Tĩnh (Static Files)
+│       ├── js/                  # Frontend Scripts (AJAX, dynamic table calculation)
 │       │   └── receipt-form.js
-│       └── images/              # Logo, icon
+│       └── images/              # Logo, icons
 │
 ├── database/                    # Quản lý Migration & Seeder (Sequelize CLI)
 │   ├── config/
 │   │   └── config.js            # Cấu hình Sequelize CLI kết nối PostgreSQL
-│   ├── migrations/              # Các file Migrations tạo bảng CSDL
+│   ├── migrations/              # Files Migration theo thứ tự phụ thuộc
 │   │   ├── 20260824000001-create-units.js
 │   │   ├── 20260824000002-create-warehouses.js
 │   │   ├── 20260824000003-create-suppliers.js
@@ -86,21 +165,21 @@ manage-warehouse/
 │   │   ├── 20260824000005-create-items.js
 │   │   ├── 20260824000006-create-inventory-receipts.js
 │   │   └── 20260824000007-create-inventory-receipt-details.js
-│   └── seeders/                 # Dữ liệu mẫu (Dùng để test)
+│   └── seeders/                 # Dữ liệu mẫu khởi tạo
 │       └── 20260824000008-demo-master-data.js
 │
-└── tests/                       # Thư mục chứa Unittest
+└── tests/                       # Thư mục chứa Unit & Integration tests
     ├── unit/
-    │   └── receipt.service.test.ts # Test nghiệp vụ tính toán & tạo phiếu
+    │   └── receipt.service.test.ts
     └── integration/
-        └── receipt.api.test.ts     # Test các endpoint API
+        └── receipt.api.test.ts
 ```
 
 ---
 
-## 2. CẤU HÌNH CÁC FILE NÒNG CỐT (CONFIG FILES)
+## 3. CẤU HÌNH CÁC FILE NÒNG CỐT (CONFIG FILES)
 
-### 2.1. File `.sequelizerc`
+### 3.1. File `.sequelizerc`
 ```javascript
 const path = require('path');
 
@@ -112,7 +191,7 @@ module.exports = {
 };
 ```
 
-### 2.2. File `tsconfig.json`
+### 3.2. File `tsconfig.json`
 ```json
 {
   "compilerOptions": {
@@ -134,7 +213,7 @@ module.exports = {
 }
 ```
 
-### 2.3. Mẫu Layout EJS Nhúng Tailwind CSS CDN (`src/views/layouts/main.ejs`)
+### 3.3. Mẫu Layout EJS Nhúng Tailwind CSS CDN (`src/views/layouts/main.ejs`)
 ```html
 <!DOCTYPE html>
 <html lang="vi">
@@ -171,9 +250,9 @@ module.exports = {
 
 ---
 
-## 3. HƯỚNG DẪN CÁC LỆNH SETUP & RUN DỰ ÁN
+## 4. HƯỚNG DẪN CÁC LỆNH SETUP & RUN DỰ ÁN
 
-### 3.1. Cài Đặt Dependencies (npm)
+### 4.1. Cài Đặt Dependencies (npm)
 ```bash
 # Dependencies chính
 npm install express sequelize pg pg-hstore ejs dotenv
@@ -182,7 +261,7 @@ npm install express sequelize pg pg-hstore ejs dotenv
 npm install -D typescript @types/node @types/express @types/ejs tsx sequelize-cli jest ts-jest @types/jest
 ```
 
-### 3.2. Cấu Hình Script `package.json`
+### 4.2. Cấu Hình Script `package.json`
 ```json
 "scripts": {
   "dev": "tsx watch --include src/views/**/* src/server.ts",
@@ -194,3 +273,4 @@ npm install -D typescript @types/node @types/express @types/ejs tsx sequelize-cl
   "test": "jest"
 }
 ```
+
