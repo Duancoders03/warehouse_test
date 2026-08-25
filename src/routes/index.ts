@@ -32,7 +32,7 @@ router.get('/', async (req, res, next) => {
         totalAmount,
         itemsCount: items.length,
         warehousesCount: warehouses.length,
-        suppliersCount: suppliers.length,
+        suppliersCount: suppliers.totalItems,
       },
       recentReceipts: receipts.slice(0, 5),
       companyName: env.COMPANY_NAME,

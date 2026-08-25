@@ -9,7 +9,7 @@ export interface SupplierAttributes {
   tax_code?: string;
 }
 
-export interface SupplierCreationAttributes extends Optional<SupplierAttributes, 'id' | 'address' | 'tax_code'> {}
+export type SupplierCreationAttributes = Optional<SupplierAttributes, 'id' | 'tax_code'>;
 
 export class Supplier
   extends Model<SupplierAttributes, SupplierCreationAttributes>
@@ -32,15 +32,45 @@ Supplier.init(
     code: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      unique: true,
+      unique: {
+        name: 'suppliers_code_unique',
+        msg: 'Mã nhà cung cấp đã tồn tại trong hệ thống',
+      },
+      validate: {
+        notEmpty: {
+          msg: 'Mã nhà cung cấp không được để trống',
+        },
+        len: {
+          args: [2, 50],
+          msg: 'Mã nhà cung cấp phải có độ dài từ 2 đến 50 ký tự',
+        },
+      },
     },
     name: {
       type: DataTypes.STRING(255),
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Tên nhà cung cấp không được để trống',
+        },
+        len: {
+          args: [2, 255],
+          msg: 'Tên nhà cung cấp phải có độ dài từ 2 đến 255 ký tự',
+        },
+      },
     },
     address: {
       type: DataTypes.STRING(255),
-      allowNull: true,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Địa chỉ không được để trống',
+        },
+        len: {
+          args: [2, 255],
+          msg: 'Địa chỉ phải có độ dài từ 2 đến 255 ký tự',
+        },
+      },
     },
     tax_code: {
       type: DataTypes.STRING(20),

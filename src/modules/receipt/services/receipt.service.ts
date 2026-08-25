@@ -1,5 +1,4 @@
 import { InventoryReceiptDto, CreateReceiptDto } from '../dtos/receipt.dto';
-import { MOCK_SUPPLIERS } from '../../supplier/services/supplier.service';
 import { MOCK_EMPLOYEES } from '../../employee/services/employee.service';
 import { MOCK_ITEMS } from '../../item/services/item.service';
 
@@ -12,7 +11,7 @@ const receiptsStore: InventoryReceiptDto[] = [
     original_document_date: '2026-08-22',
     deliverer_name: 'Nguyễn Văn Nam (Lái xe)',
     supplier_id: 's-1',
-    supplier: MOCK_SUPPLIERS[0],
+    supplier: { id: 's-1', code: 'NCC-HOAPAT', name: 'Tập đoàn Hòa Phát', address: 'KCN Phố Nối A, Hưng Yên', tax_code: '0100100101' },
     warehouse_id: 'w-1',
     warehouse: { id: 'w-1', code: 'KHO-TONG', name: 'Kho Tổng Trung Tâm VIMES', address: 'TP.HCM' },
     debit_account: '152',
@@ -70,7 +69,7 @@ const receiptsStore: InventoryReceiptDto[] = [
     original_document_date: '2026-08-23',
     deliverer_name: 'Trần Quốc Tuấn',
     supplier_id: 's-2',
-    supplier: MOCK_SUPPLIERS[1],
+    supplier: { id: 's-2', code: 'NCC-CADIVI', name: 'Công ty Cổ phần Dây cáp điện Việt Nam (CADIVI)', address: 'TP.HCM', tax_code: '0300381564' },
     warehouse_id: 'w-2',
     warehouse: { id: 'w-2', code: 'KHO-VT1', name: 'Kho Vật Tư 01 - Cầu Giấy', address: 'Hà Nội' },
     debit_account: '1521',
@@ -145,7 +144,6 @@ export class ReceiptService {
 
   async createReceipt(dto: CreateReceiptDto): Promise<InventoryReceiptDto> {
     const id = `rec-${Date.now()}`;
-    const supplier = MOCK_SUPPLIERS.find(s => s.id === dto.supplier_id);
     const createdBy = MOCK_EMPLOYEES.find(e => e.id === dto.created_by_id);
     const keeper = MOCK_EMPLOYEES.find(e => e.id === dto.keeper_id);
     const accountant = MOCK_EMPLOYEES.find(e => e.id === dto.accountant_id);
@@ -183,8 +181,6 @@ export class ReceiptService {
       original_document_date: dto.original_document_date,
       deliverer_name: dto.deliverer_name,
       supplier_id: dto.supplier_id,
-      supplier,
-      warehouse_id: dto.warehouse_id,
       debit_account: dto.debit_account || '152',
       credit_account: dto.credit_account || '331',
       total_amount,
@@ -245,6 +241,8 @@ export function numberToVietnameseWords(amount: number): string {
     }
     if (ten !== 1 && unit === 5 && ten > 0) {
       res += 'lăm ';
+    } else if (ten === 0 && unit === 5) {
+      res += 'năm ';
     } else if (ten === 0 && unit === 5) {
       res += 'năm ';
     } else if (unit > 0 && !(ten > 0 && unit === 1)) {

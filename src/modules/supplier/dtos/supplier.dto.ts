@@ -6,9 +6,6 @@ export interface SupplierDto {
   tax_code?: string;
 }
 
-export interface CreateSupplierDto {
-  code: string;
-  name: string;
-  address?: string;
-  tax_code?: string;
-}
+export type CreateSupplierDto = Omit<SupplierDto, 'id'>;
+
+export type UpdateSupplierDto = Partial<CreateSupplierDto>;
