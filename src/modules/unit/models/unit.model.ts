@@ -33,8 +33,8 @@ Unit.init(
           msg: 'Mã đơn vị không được để trống',
         },
         len: {
-          args: [3, 15],
-          msg: 'Mã đơn vị phải có độ dài từ 3 đến 15 ký tự',
+          args: [2, 15],
+          msg: 'Mã đơn vị phải có độ dài từ 2 đến 15 ký tự',
         },
         isAlphanumeric: {
           msg: 'Mã đơn vị chỉ được chứa ký tự chữ và số',
@@ -53,8 +53,8 @@ Unit.init(
           msg: 'Tên đơn vị không được để trống',
         },
         len: {
-          args: [3, 100],
-          msg: 'Tên đơn vị phải có độ dài từ 3 đến 100 ký tự',
+          args: [2, 100],
+          msg: 'Tên đơn vị phải có độ dài từ 2 đến 100 ký tự',
         },
       },
       unique: {

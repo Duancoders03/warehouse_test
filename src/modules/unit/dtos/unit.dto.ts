@@ -8,3 +8,8 @@ export interface CreateUnitDto {
   code: string;
   name: string;
 }
+
+export interface UpdateUnitDto {
+  code?: string;
+  name?: string;
+}

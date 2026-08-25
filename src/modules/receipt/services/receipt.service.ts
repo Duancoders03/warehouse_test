@@ -3,7 +3,6 @@ import { MOCK_SUPPLIERS } from '../../supplier/services/supplier.service';
 import { MOCK_WAREHOUSES } from '../../warehouse/services/warehouse.service';
 import { MOCK_EMPLOYEES } from '../../employee/services/employee.service';
 import { MOCK_ITEMS } from '../../item/services/item.service';
-import { MOCK_UNITS } from '../../unit/services/unit.service';
 
 const receiptsStore: InventoryReceiptDto[] = [
   {
@@ -156,7 +155,6 @@ export class ReceiptService {
     let total_amount = 0;
     const details = dto.details.map((item, index) => {
       const itemData = MOCK_ITEMS.find(i => i.id === item.item_id);
-      const unitData = MOCK_UNITS.find(u => u.id === item.unit_id);
       const rowWarehouse = MOCK_WAREHOUSES.find(w => w.id === item.warehouse_id) || warehouse;
       const amount = Number(item.actual_quantity) * Number(item.unit_price);
       total_amount += amount;
@@ -170,7 +168,7 @@ export class ReceiptService {
         item_name: itemData?.name || 'Vật tư chưa chọn',
         specifications: itemData?.specifications || '',
         unit_id: item.unit_id,
-        unit_name: unitData?.name || 'Cái',
+        unit_name: 'Cái',
         warehouse_id: rowWarehouse?.id,
         warehouse_name: rowWarehouse?.name,
         document_quantity: Number(item.document_quantity),

@@ -25,8 +25,8 @@ export const connectDatabase = async (): Promise<boolean> => {
   }
 };
 
-// Configuration export for Sequelize CLI (Migrations & Seeders)
-module.exports = {
+// CommonJS module.exports for Sequelize CLI compatibility
+const cliConfig = {
   development: {
     username: env.DB_USER,
     password: env.DB_PASSWORD,
@@ -50,7 +50,13 @@ module.exports = {
     host: env.DB_HOST,
     port: env.DB_PORT,
     dialect: 'postgres'
-  },
+  }
+};
+
+module.exports = Object.assign(cliConfig, {
   sequelize,
   connectDatabase,
-};
+  development: cliConfig.development,
+  test: cliConfig.test,
+  production: cliConfig.production
+});
