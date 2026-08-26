@@ -40,7 +40,7 @@
 
   <!-- Filter & Search Bar -->
   <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-    <form action="/master/units" method="GET" class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+    <form action="/admin/units" method="GET" class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
       <div class="relative flex-1">
         <input type="text" name="keyword" id="unitSearchKeyword" value="<%= typeof keyword !== 'undefined' ? keyword : '' %>" placeholder="Nhập mã ĐVT hoặc tên đơn vị..." class="w-full text-sm pl-9 pr-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
@@ -49,7 +49,7 @@
         Tìm Kiếm
       </button>
       <% if (typeof keyword !== 'undefined' && keyword) { %>
-        <a href="/master/units" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium text-xs rounded-xl transition-all text-center">
+        <a href="/admin/units" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium text-xs rounded-xl transition-all text-center">
           Xóa Lọc
         </a>
       <% } %>
@@ -87,7 +87,7 @@
                           class="p-2 rounded-lg text-slate-500 hover:text-sky-600 hover:bg-sky-50 transition-colors cursor-pointer">
                     <i class="fa-solid fa-pen-to-square"></i>
                   </button>
-                  <form action="/master/units/<%= u.id %>/delete" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn vị tính `<%= u.name %>`?');">
+                  <form action="/admin/units/<%= u.id %>/delete" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn vị tính `<%= u.name %>`?');">
                     <button type="submit" 
                             title="Xóa Đơn Vị Tính" 
                             class="p-2 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer">
@@ -123,7 +123,7 @@
       </button>
     </div>
     
-    <form action="/master/units" method="POST" class="p-6 space-y-4">
+    <form action="/admin/units" method="POST" class="p-6 space-y-4">
       <div>
         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
           Mã ĐVT <span class="text-rose-500">*</span>
@@ -205,7 +205,7 @@
 
   function openEditModal(id, code, name) {
     const editForm = document.getElementById('editForm');
-    editForm.action = `/master/units/${id}/update`;
+    editForm.action = `/admin/units/${id}/update`;
     document.getElementById('editCode').value = code;
     document.getElementById('editName').value = name;
     document.getElementById('editModal').classList.remove('hidden');

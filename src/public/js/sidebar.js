@@ -9,9 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const openMobileBtn = document.getElementById('openMobileSidebarBtn');
   const closeMobileBtn = document.getElementById('closeMobileSidebarBtn');
 
-  // --- Desktop Collapse / Expand ---
+  // --- Thu gọn / Mở rộng Sidebar cho Desktop ---
   if (desktopSidebar && toggleDesktopBtn) {
-    // Read saved preference
+    // Đọc cấu hình ưu tiên đã lưu trong LocalStorage
     const isCollapsed = localStorage.getItem('wms_sidebar_collapsed') === 'true';
     if (isCollapsed) {
       desktopSidebar.classList.add('collapsed');
@@ -37,11 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- Mobile Drawer Open / Close ---
+  // --- Mở / Đóng Sidebar Drawer trên Mobile ---
   function openMobileSidebar() {
     if (!mobileDrawer || !mobilePanel || !mobileBackdrop) return;
     mobileDrawer.classList.remove('hidden');
-    // Force browser reflow for animation
+    // Kích hoạt tính toán lại giao diện cho hiệu ứng chuyển cảnh
     void mobileDrawer.offsetWidth;
     mobileBackdrop.classList.remove('opacity-0');
     mobileBackdrop.classList.add('opacity-100');
@@ -72,14 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
     mobileBackdrop.addEventListener('click', closeMobileSidebar);
   }
 
-  // Close on Escape key
+  // Đóng sidebar khi nhấn phím Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && mobileDrawer && !mobileDrawer.classList.contains('hidden')) {
       closeMobileSidebar();
     }
   });
 
-  // Close mobile sidebar when window is resized to desktop width
+  // Đóng mobile sidebar khi thay đổi kích thước màn hình sang giao diện desktop
   window.addEventListener('resize', () => {
     if (window.innerWidth >= 768 && mobileDrawer && !mobileDrawer.classList.contains('hidden')) {
       closeMobileSidebar();

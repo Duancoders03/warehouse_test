@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!tableBody) return;
 
-  // Render notification banner (matching module UI design)
+  // Hiển thị thông báo (Banner) phù hợp với giao diện thiết kế
   function showNotification(type, message) {
     const banner = document.getElementById("notificationBanner");
     if (!banner) {
@@ -44,13 +44,13 @@ document.addEventListener("DOMContentLoaded", () => {
     banner.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  // Re-calculate row total and overall receipt total
+  // Tính toán lại tổng tiền của từng dòng và tổng tiền toàn bộ phiếu
   function updateTotals() {
     let total = 0;
     const rows = tableBody.querySelectorAll("tr.item-row");
 
     rows.forEach((row, index) => {
-      // Update STT (Column A)
+      // Cập nhật Số Thứ Tự (STT)
       const sttCell = row.querySelector(".row-stt");
       if (sttCell) sttCell.textContent = index + 1;
 
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Update available product options across all dropdowns (hide already selected products)
+  // Cập nhật danh sách vật tư khả dụng trên tất cả dropdown (ẩn vật tư đã được chọn)
   function updateProductOptions() {
     const allSelects = tableBody.querySelectorAll(".item-select");
     const selectedIds = new Set();
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Handle Item selection change to fill Unit and pre-fill item info
+  // Xử lý sự kiện thay đổi Vật tư để tự động điền Đơn vị tính và thông tin quy cách
   function handleItemChange(event) {
     const select = event.target;
     const selectedOption = select.options[select.selectedIndex];
@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateProductOptions();
   }
 
-  // Add new item row to the table
+  // Thêm một dòng vật tư mới vào bảng
   function addNewRow() {
     const rowCount = tableBody.querySelectorAll("tr.item-row").length + 1;
     const templateRow = tableBody.querySelector("tr.item-row");
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const newRow = templateRow.cloneNode(true);
 
-    // Reset values in new row
+    // Đặt lại các giá trị ban đầu cho dòng mới
     newRow.querySelectorAll("input").forEach((input) => {
       if (
         input.classList.contains("doc-qty-input") ||
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
       select.selectedIndex = 0;
     });
 
-    // Attach listeners
+    // Lắng nghe các sự kiện cho dòng mới
     attachRowListeners(newRow);
 
     tableBody.appendChild(newRow);
@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateProductOptions();
   }
 
-  // Attach event listeners to row inputs
+  // Gán các sự kiện tương tác cho dữ liệu đầu vào của dòng
   function attachRowListeners(row) {
     const itemSelect = row.querySelector(".item-select");
     if (itemSelect) {
@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Auto-select Keeper and Creator based on selected Warehouse
+  // Tự động chọn Thủ kho và Người lập phiếu dựa trên Kho hàng đã chọn
   const mainWarehouseSelect = document.getElementById("warehouse_id");
   const keeperSelect = document.getElementById("keeper_id");
   const creatorSelect = document.getElementById("created_by_id");
@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const selectedWh = mainWarehouseSelect.value;
       if (!selectedWh) return;
 
-      // Automatically select matching keeper for selected warehouse if available
+      // Tự động chọn thủ kho tương ứng với kho đã chọn
       for (let i = 0; i < keeperSelect.options.length; i++) {
         const opt = keeperSelect.options[i];
         if (opt.dataset.warehouseId === selectedWh) {
@@ -220,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // Automatically select matching creator for selected warehouse if available
+      // Tự động chọn người lập tương ứng với kho đã chọn
       if (creatorSelect) {
         for (let i = 0; i < creatorSelect.options.length; i++) {
           const opt = creatorSelect.options[i];
@@ -233,13 +233,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Init existing rows
+  // Khởi tạo các dòng hiện có
   tableBody.querySelectorAll("tr.item-row").forEach(attachRowListeners);
   if (addRowBtn) {
     addRowBtn.addEventListener("click", addNewRow);
   }
 
-  // Handle status submit button clicks
+  // Xử lý khi nhấn các nút thay đổi trạng thái phiếu
   document.querySelectorAll(".btn-status-submit").forEach((btn) => {
     btn.addEventListener("click", () => {
       const statusVal = btn.getAttribute("data-status");
@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Handle status action dropdown toggle & selection
+  // Xử lý đóng/mở menu dropdown và lựa chọn trạng thái phiếu
   const toggleDropdownBtn = document.getElementById("toggleStatusDropdown");
   const dropdownMenu = document.getElementById("statusDropdownMenu");
   const mainSubmitBtn = document.getElementById("mainSubmitBtn");
@@ -328,7 +328,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Handle Form Submission
+  // Xử lý gửi dữ liệu Form (Submit)
   if (receiptForm) {
     receiptForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -444,7 +444,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Initial calculation on page load
+  // Tính toán ban đầu khi tải trang
   updateTotals();
   updateProductOptions();
 });

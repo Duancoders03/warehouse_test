@@ -40,7 +40,7 @@
 
   <!-- Filter & Search Bar -->
   <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-    <form action="/master/warehouses" method="GET" class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+    <form action="/admin/warehouses" method="GET" class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
       <div class="relative flex-1">
         <input type="text" name="keyword" id="warehouseSearchKeyword" value="<%= typeof keyword !== 'undefined' ? keyword : '' %>" placeholder="Nhập mã kho, tên kho hoặc địa chỉ..." class="w-full text-sm pl-9 pr-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
@@ -49,7 +49,7 @@
         Tìm Kiếm
       </button>
       <% if (typeof keyword !== 'undefined' && keyword) { %>
-        <a href="/master/warehouses" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium text-xs rounded-xl transition-all text-center">
+        <a href="/admin/warehouses" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium text-xs rounded-xl transition-all text-center">
           Xóa Lọc
         </a>
       <% } %>
@@ -86,7 +86,7 @@
                     class="px-3 py-1.5 rounded-lg text-xs font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 transition-colors cursor-pointer flex items-center">
               <i class="fa-solid fa-pen-to-square mr-1.5"></i> Sửa
             </button>
-            <form action="/master/warehouses/<%= w.id %>/delete" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa kho hàng `<%= w.name %>`?');">
+            <form action="/admin/warehouses/<%= w.id %>/delete" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa kho hàng `<%= w.name %>`?');">
               <button type="submit" 
                       title="Xóa Kho Hàng" 
                       class="px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 transition-colors cursor-pointer flex items-center">
@@ -119,7 +119,7 @@
       </button>
     </div>
     
-    <form action="/master/warehouses" method="POST" class="p-6 space-y-4">
+    <form action="/admin/warehouses" method="POST" class="p-6 space-y-4">
       <div>
         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
           Mã Kho Hàng <span class="text-rose-500">*</span>
@@ -217,7 +217,7 @@
 
   function openEditModal(id, code, name, address) {
     const editForm = document.getElementById('editForm');
-    editForm.action = `/master/warehouses/${id}/update`;
+    editForm.action = `/admin/warehouses/${id}/update`;
     document.getElementById('editCode').value = code;
     document.getElementById('editName').value = name;
     document.getElementById('editAddress').value = address;

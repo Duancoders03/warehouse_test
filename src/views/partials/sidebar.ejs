@@ -29,27 +29,27 @@
         <span class="sidebar-text">Danh Mục Master Data</span>
       </div>
       <nav class="space-y-1">
-        <a href="/master/items" title="Vật Tư / Hàng Hóa" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'master-items' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+        <a href="/admin/items" title="Vật Tư / Hàng Hóa" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-items' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
           <i class="fa-solid fa-boxes-packing w-5 text-center mr-3 text-slate-400"></i>
           <span class="sidebar-text">Vật Tư / Hàng Hóa</span>
         </a>
 
-        <a href="/master/units" title="Đơn Vị Tính" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'master-units' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+        <a href="/admin/units" title="Đơn Vị Tính" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-units' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
           <i class="fa-solid fa-scale-balanced w-5 text-center mr-3 text-slate-400"></i>
           <span class="sidebar-text">Đơn Vị Tính</span>
         </a>
 
-        <a href="/master/warehouses" title="Kho Hàng" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'master-warehouses' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+        <a href="/admin/warehouses" title="Kho Hàng" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-warehouses' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
           <i class="fa-solid fa-warehouse w-5 text-center mr-3 text-slate-400"></i>
           <span class="sidebar-text">Kho Hàng</span>
         </a>
 
-        <a href="/master/suppliers" title="Nhà Cung Cấp" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'master-suppliers' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+        <a href="/admin/suppliers" title="Nhà Cung Cấp" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-suppliers' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
           <i class="fa-solid fa-truck-field w-5 text-center mr-3 text-slate-400"></i>
           <span class="sidebar-text">Nhà Cung Cấp</span>
         </a>
 
-        <a href="/master/users" title="Người Dùng & Vai Trò" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'master-users' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+        <a href="/admin/users" title="Người Dùng & Vai Trò" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-users' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
           <i class="fa-solid fa-users-gear w-5 text-center mr-3 text-slate-400"></i>
           <span class="sidebar-text">Người Dùng & Vai Trò</span>
         </a>
@@ -109,27 +109,27 @@
           Danh Mục Master Data
         </div>
         <nav class="space-y-1">
-          <a href="/master/items" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'master-items' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+          <a href="/admin/items" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-items' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
             <i class="fa-solid fa-boxes-packing w-5 text-center mr-3 text-slate-400"></i>
             Vật Tư / Hàng Hóa
           </a>
 
-          <a href="/master/units" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'master-units' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+          <a href="/admin/units" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-units' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
             <i class="fa-solid fa-scale-balanced w-5 text-center mr-3 text-slate-400"></i>
             Đơn Vị Tính
           </a>
 
-          <a href="/master/warehouses" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'master-warehouses' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+          <a href="/admin/warehouses" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-warehouses' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
             <i class="fa-solid fa-warehouse w-5 text-center mr-3 text-slate-400"></i>
             Kho Hàng
           </a>
 
-          <a href="/master/suppliers" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'master-suppliers' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+          <a href="/admin/suppliers" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-suppliers' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
             <i class="fa-solid fa-truck-field w-5 text-center mr-3 text-slate-400"></i>
             Nhà Cung Cấp
           </a>
 
-          <a href="/master/users" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'master-users' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+          <a href="/admin/users" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-users' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
             <i class="fa-solid fa-users-gear w-5 text-center mr-3 text-slate-400"></i>
             Người Dùng & Vai Trò
           </a>

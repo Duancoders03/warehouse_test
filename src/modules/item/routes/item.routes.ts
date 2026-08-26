@@ -3,10 +3,10 @@ import { itemController } from '../controllers/item.controller';
 
 const router = Router();
 
-// SSR View & CRUD Form Actions
-router.get('/master/items', (req, res, next) => itemController.renderItemsPage(req, res, next));
-router.post('/master/items', (req, res, next) => itemController.createItem(req, res, next));
-router.post('/master/items/:id/update', (req, res, next) => itemController.updateItem(req, res, next));
-router.post('/master/items/:id/delete', (req, res, next) => itemController.deleteItem(req, res, next));
+// Route hiển thị giao diện (SSR) & thao tác CRUD vật tư / hàng hóa
+router.get('/admin/items', (req, res, next) => itemController.renderItemsPage(req, res, next));
+router.post('/admin/items', (req, res, next) => itemController.createItem(req, res, next));
+router.post('/admin/items/:id/update', (req, res, next) => itemController.updateItem(req, res, next));
+router.post('/admin/items/:id/delete', (req, res, next) => itemController.deleteItem(req, res, next));
 
 export default router;

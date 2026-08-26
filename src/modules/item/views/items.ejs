@@ -40,7 +40,7 @@
 
   <!-- Filter & Search Bar -->
   <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
-    <form action="/master/items" method="GET" class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+    <form action="/admin/items" method="GET" class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
       
       <!-- Search Keyword -->
       <div class="sm:col-span-2">
@@ -57,7 +57,7 @@
           Tìm Kiếm
         </button>
         <% if (typeof keyword !== 'undefined' && keyword) { %>
-          <a href="/master/items" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium text-xs rounded-xl transition-all text-center">
+          <a href="/admin/items" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium text-xs rounded-xl transition-all text-center">
             Xóa Lọc
           </a>
         <% } %>
@@ -108,7 +108,7 @@
                           class="p-2 rounded-lg text-slate-500 hover:text-sky-600 hover:bg-sky-50 transition-colors cursor-pointer">
                     <i class="fa-solid fa-pen-to-square"></i>
                   </button>
-                  <form action="/master/items/<%= item.id %>/delete" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa vật tư `<%= item.name %>`?');">
+                  <form action="/admin/items/<%= item.id %>/delete" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa vật tư `<%= item.name %>`?');">
                     <button type="submit" 
                             title="Xóa Vật Tư" 
                             class="p-2 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer">
@@ -141,7 +141,7 @@
         <div class="flex items-center space-x-1">
           <!-- Button Trang trước -->
           <% if (pagination.currentPage > 1) { %>
-            <a href="/master/items?page=<%= pagination.currentPage - 1 %>&keyword=<%= encodeURIComponent(keyword || '') %>" 
+            <a href="/admin/items?page=<%= pagination.currentPage - 1 %>&keyword=<%= encodeURIComponent(keyword || '') %>" 
                class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-all">
               <i class="fa-solid fa-chevron-left mr-1"></i> Trước
             </a>
@@ -158,7 +158,7 @@
                 <%= p %>
               </span>
             <% } else { %>
-              <a href="/master/items?page=<%= p %>&keyword=<%= encodeURIComponent(keyword || '') %>" 
+              <a href="/admin/items?page=<%= p %>&keyword=<%= encodeURIComponent(keyword || '') %>" 
                  class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-all">
                 <%= p %>
               </a>
@@ -167,7 +167,7 @@
 
           <!-- Button Trang sau -->
           <% if (pagination.currentPage < pagination.totalPages) { %>
-            <a href="/master/items?page=<%= pagination.currentPage + 1 %>&keyword=<%= encodeURIComponent(keyword || '') %>" 
+            <a href="/admin/items?page=<%= pagination.currentPage + 1 %>&keyword=<%= encodeURIComponent(keyword || '') %>" 
                class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-all">
               Sau <i class="fa-solid fa-chevron-right ml-1"></i>
             </a>
@@ -195,7 +195,7 @@
       </button>
     </div>
     
-    <form action="/master/items" method="POST" class="p-6 space-y-4">
+    <form action="/admin/items" method="POST" class="p-6 space-y-4">
       <div>
         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
           Mã Vật Tư <span class="text-rose-500">*</span>
@@ -321,7 +321,7 @@
 
   function openEditModal(id, code, name, unitId, specifications) {
     const editForm = document.getElementById('editForm');
-    editForm.action = `/master/items/${id}/update`;
+    editForm.action = `/admin/items/${id}/update`;
     document.getElementById('editCode').value = code;
     document.getElementById('editName').value = name;
     document.getElementById('editUnitId').value = unitId;

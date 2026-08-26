@@ -14,7 +14,7 @@ import { env } from '../config/environment';
 
 const router = Router();
 
-// Root Dashboard Route
+// Route Trang Chủ / Tổng Quan (Dashboard)
 router.get('/', async (req, res, next) => {
   try {
     const receiptData = await receiptService.getAllReceipts({ limit: 100 });
@@ -43,7 +43,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// Mount Module Routes
+// Tích hợp (Mount) các Route Module
 router.use(unitRoutes);
 router.use(warehouseRoutes);
 router.use(supplierRoutes);

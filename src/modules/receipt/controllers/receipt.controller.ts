@@ -8,7 +8,7 @@ import { unitService } from '../../unit/services/unit.service';
 import { env } from '../../../config/environment';
 
 export class ReceiptController {
-  // SSR View Render: GET /receipts
+  // Render trang giao diện danh sách: GET /receipts
   async renderReceiptList(req: Request, res: Response, next: NextFunction) {
     try {
       const paginatedData = await receiptService.getAllReceipts(req.query as any);
@@ -29,7 +29,7 @@ export class ReceiptController {
     }
   }
 
-  // SSR View Render: GET /receipts/create
+  // Render trang giao diện tạo mới: GET /receipts/create
   async renderReceiptCreate(req: Request, res: Response, next: NextFunction) {
     try {
       const warehouses = await warehouseService.getWarehouses();
@@ -61,7 +61,7 @@ export class ReceiptController {
     }
   }
 
-  // SSR Form Action / AJAX Submit: POST /receipts/create
+  // Xử lý gửi Form / AJAX Submit: POST /receipts/create
   async handleCreateReceipt(req: Request, res: Response, next: NextFunction) {
     try {
       const newReceipt = await receiptService.createReceipt(req.body);
@@ -77,7 +77,7 @@ export class ReceiptController {
     }
   }
 
-  // SSR View Render: GET /receipts/:id
+  // Render trang giao diện chi tiết: GET /receipts/:id
   async renderReceiptDetail(req: Request, res: Response, next: NextFunction) {
     try {
       const receipt = await receiptService.getReceiptById(req.params.id as any);
@@ -102,7 +102,7 @@ export class ReceiptController {
     }
   }
 
-  // SSR Delete Action: POST /receipts/:id/delete
+  // Xử lý xóa phiếu nhập kho: POST /receipts/:id/delete
   async handleDeleteReceipt(req: Request, res: Response, next: NextFunction) {
     try {
       await receiptService.deleteReceipt(req.params.id as any);
@@ -112,7 +112,7 @@ export class ReceiptController {
     }
   }
 
-  // SSR View Render: GET /receipts/:id/edit
+  // Render trang giao diện chỉnh sửa: GET /receipts/:id/edit
   async renderReceiptEdit(req: Request, res: Response, next: NextFunction) {
     try {
       const receipt = await receiptService.getReceiptById(req.params.id as string);
@@ -158,7 +158,7 @@ export class ReceiptController {
     }
   }
 
-  // SSR Form Action / AJAX Submit: POST /receipts/:id/edit
+  // Xử lý cập nhật phiếu nhập kho: POST /receipts/:id/edit
   async handleUpdateReceipt(req: Request, res: Response, next: NextFunction) {
     try {
       const updated = await receiptService.updateReceipt(req.params.id as string, req.body);
@@ -174,7 +174,7 @@ export class ReceiptController {
     }
   }
 
-  // POST /receipts/:id/status
+  // Xử lý cập nhật trạng thái phiếu: POST /receipts/:id/status
   async handleUpdateStatus(req: Request, res: Response, next: NextFunction) {
     try {
       const { status } = req.body;

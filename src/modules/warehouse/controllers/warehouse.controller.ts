@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { warehouseService } from '../services/warehouse.service';
 
 export class WarehouseController {
-  // SSR View Render: GET /master/warehouses
+  // Render trang giao diện danh sách: GET /admin/warehouses
   async renderWarehousesPage(req: Request, res: Response, next: NextFunction) {
     try {
       const keyword = (req.query.keyword as string) || '';
@@ -12,7 +12,7 @@ export class WarehouseController {
 
       res.render('warehouse/views/warehouses', {
         title: 'Danh Mục Kho Hàng',
-        currentNav: 'master-warehouses',
+        currentNav: 'admin-warehouses',
         warehouses,
         keyword,
         successMsg,
@@ -23,37 +23,37 @@ export class WarehouseController {
     }
   }
 
-  // SSR Form Action: POST /master/warehouses (Create)
+  // Xử lý gửi Form: POST /admin/warehouses (Tạo mới)
   async createWarehouse(req: Request, res: Response, next: NextFunction) {
     try {
       const { code, name, address } = req.body;
       await warehouseService.createWarehouse({ code, name, address });
-      res.redirect('/master/warehouses?success=' + encodeURIComponent('Thêm mới kho hàng thành công!'));
+      res.redirect('/admin/warehouses?success=' + encodeURIComponent('Thêm mới kho hàng thành công!'));
     } catch (err: any) {
-      res.redirect('/master/warehouses?error=' + encodeURIComponent(err.message || 'Lỗi khi thêm mới kho hàng'));
+      res.redirect('/admin/warehouses?error=' + encodeURIComponent(err.message || 'Lỗi khi thêm mới kho hàng'));
     }
   }
 
-  // SSR Form Action: POST /master/warehouses/:id/update (Update)
+  // Xử lý gửi Form: POST /admin/warehouses/:id/update (Cập nhật)
   async updateWarehouse(req: Request, res: Response, next: NextFunction) {
     try {
       const id = req.params.id as string;
       const { code, name, address } = req.body;
       await warehouseService.updateWarehouse(id, { code, name, address });
-      res.redirect('/master/warehouses?success=' + encodeURIComponent('Cập nhật kho hàng thành công!'));
+      res.redirect('/admin/warehouses?success=' + encodeURIComponent('Cập nhật kho hàng thành công!'));
     } catch (err: any) {
-      res.redirect('/master/warehouses?error=' + encodeURIComponent(err.message || 'Lỗi khi cập nhật kho hàng'));
+      res.redirect('/admin/warehouses?error=' + encodeURIComponent(err.message || 'Lỗi khi cập nhật kho hàng'));
     }
   }
 
-  // SSR Form Action: POST /master/warehouses/:id/delete (Delete)
+  // Xử lý gửi Form: POST /admin/warehouses/:id/delete (Xóa)
   async deleteWarehouse(req: Request, res: Response, next: NextFunction) {
     try {
       const id = req.params.id as string;
       await warehouseService.deleteWarehouse(id);
-      res.redirect('/master/warehouses?success=' + encodeURIComponent('Xóa kho hàng thành công!'));
+      res.redirect('/admin/warehouses?success=' + encodeURIComponent('Xóa kho hàng thành công!'));
     } catch (err: any) {
-      res.redirect('/master/warehouses?error=' + encodeURIComponent(err.message || 'Lỗi khi xóa kho hàng'));
+      res.redirect('/admin/warehouses?error=' + encodeURIComponent(err.message || 'Lỗi khi xóa kho hàng'));
     }
   }
 }

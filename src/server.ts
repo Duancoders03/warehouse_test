@@ -3,7 +3,7 @@ import { env } from './config/environment';
 import { connectDatabase } from './config/database';
 
 const startServer = async () => {
-  // Gracefully attempt DB connection (switches to mock mode if DB is not set up yet)
+  // Thử kết nối Cơ sở dữ liệu (chuyển sang chế độ giả lập nếu chưa thiết lập CSDL)
   await connectDatabase();
 
   app.listen(env.PORT, () => {

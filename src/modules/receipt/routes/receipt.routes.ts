@@ -3,7 +3,7 @@ import { receiptController } from '../controllers/receipt.controller';
 
 const router = Router();
 
-// SSR View Routes & Form Actions (Receipt Header & Aggregate)
+// Các route hiển thị giao diện (SSR) & thao tác form (Thông tin chung & Chi tiết phiếu nhập)
 router.get('/receipts', (req, res, next) => receiptController.renderReceiptList(req, res, next));
 router.get('/receipts/create', (req, res, next) => receiptController.renderReceiptCreate(req, res, next));
 router.post('/receipts/create', (req, res, next) => receiptController.handleCreateReceipt(req, res, next));

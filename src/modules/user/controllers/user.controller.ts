@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { userService } from '../services/user.service';
 
 export class UserController {
-  // SSR View Render: GET /master/users
+  // Render trang giao diện danh sách: GET /admin/users
   async renderUsersPage(req: Request, res: Response, next: NextFunction) {
     try {
       const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
@@ -20,7 +20,7 @@ export class UserController {
 
       res.render('user/views/users', {
         title: 'Danh Mục Người Dùng / Vai Trò',
-        currentNav: 'master-users',
+        currentNav: 'admin-users',
         users: result.items,
         pagination: result,
         keyword,
@@ -33,33 +33,33 @@ export class UserController {
     }
   }
 
-  // SSR Form Action: POST /master/users
+  // Xử lý gửi Form: POST /admin/users (Tạo mới)
   async createUser(req: Request, res: Response, next: NextFunction) {
     try {
       await userService.createUser(req.body);
-      res.redirect('/master/users?success=' + encodeURIComponent('Thêm mới người dùng thành công!'));
+      res.redirect('/admin/users?success=' + encodeURIComponent('Thêm mới người dùng thành công!'));
     } catch (err: any) {
-      res.redirect('/master/users?error=' + encodeURIComponent(err.message || 'Không thể tạo người dùng.'));
+      res.redirect('/admin/users?error=' + encodeURIComponent(err.message || 'Không thể tạo người dùng.'));
     }
   }
 
-  // SSR Form Action: POST /master/users/:id/update
+  // Xử lý gửi Form: POST /admin/users/:id/update (Cập nhật)
   async updateUser(req: Request, res: Response, next: NextFunction) {
     try {
       await userService.updateUser(req.params.id as string, req.body);
-      res.redirect('/master/users?success=' + encodeURIComponent('Cập nhật thông tin người dùng thành công!'));
+      res.redirect('/admin/users?success=' + encodeURIComponent('Cập nhật thông tin người dùng thành công!'));
     } catch (err: any) {
-      res.redirect('/master/users?error=' + encodeURIComponent(err.message || 'Không thể cập nhật người dùng.'));
+      res.redirect('/admin/users?error=' + encodeURIComponent(err.message || 'Không thể cập nhật người dùng.'));
     }
   }
 
-  // SSR Form Action: POST /master/users/:id/delete
+  // Xử lý gửi Form: POST /admin/users/:id/delete (Xóa)
   async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       await userService.deleteUser(req.params.id as string);
-      res.redirect('/master/users?success=' + encodeURIComponent('Xóa người dùng thành công!'));
+      res.redirect('/admin/users?success=' + encodeURIComponent('Xóa người dùng thành công!'));
     } catch (err: any) {
-      res.redirect('/master/users?error=' + encodeURIComponent(err.message || 'Không thể xóa người dùng.'));
+      res.redirect('/admin/users?error=' + encodeURIComponent(err.message || 'Không thể xóa người dùng.'));
     }
   }
 }
