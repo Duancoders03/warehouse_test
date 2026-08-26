@@ -1,15 +1,32 @@
 # 📦 Hệ Thống Quản Lý Kho Hàng & Lập Phiếu Nhập Kho (Warehouse Management System - WMS)
 
-> **Hệ thống Quản lý Kho Hàng Chuẩn Mẫu 01-VT** - Giải pháp phần mềm hiện đại được xây dựng trên nền tảng **Node.js, TypeScript, Express, Sequelize ORM và PostgreSQL**, hỗ trợ quản lý danh mục master data, phân quyền vai trò nhân sự linh hoạt đa kho, và quy trình lập/ký duyệt phiếu nhập kho trực quan.
+> **Hệ thống Quản lý Kho Hàng Chuẩn Mẫu 01-VT** - Giải pháp phần mềm hiện đại được xây dựng trên nền tảng **Node.js, TypeScript, Express, Sequelize ORM và PostgreSQL**, hỗ trợ quản lý danh mục admin data, phân quyền vai trò nhân sự linh hoạt đa kho, và quy trình lập/ký duyệt phiếu nhập kho trực quan.
 
 ---
 
 ## 🌟 Điểm Nổi Bật Về Kiến Trúc & Nghiệp Vụ
 
 - **Chuẩn Hóa Chứng Từ Mẫu 01-VT**: Hiển thị và in phiếu nhập kho chuẩn 8 cột (STT, Mã & Tên vật tư, Đơn vị tính, Số lượng chứng từ, Số lượng thực nhập, Đơn giá, Thành tiền, Kho thực nhập) kết hợp bộ 3 chữ ký bắt buộc (Người lập, Thủ kho, Kế toán trưởng).
+- **Cấu Trúc Route Namespace `/admin/*`**: Đã nâng cấp toàn bộ hệ thống quản lý dữ liệu danh mục nền tảng (Đơn vị tính, Kho hàng, Nhà cung cấp, Vật tư, Người dùng) về namespace quản trị `/admin/*` thống nhất.
 - **Phân Quyền Vai Trò Đa Kho (Multi-Warehouse Roles)**: Thiết kế CSDL tối giản, giải phóng ràng buộc cứng `warehouse_id` ở bảng người dùng. Cho phép Người lập (`creator`), Thủ kho (`keeper`), và Kế toán trưởng (`accountant`) linh hoạt ký duyệt và thao tác trên **N nhà kho** khác nhau.
 - **Master Data PostgreSQL Phân Trang (Server-side Pagination)**: Tất cả các danh mục Quản lý Đơn vị tính (`units`), Kho hàng (`warehouses`), Nhà cung cấp (`suppliers`), Vật tư/Hàng hóa (`items`), và Người dùng (`users`) được chuyển đổi 100% sang PostgreSQL với tính năng lọc từ khóa & phân trang phía Server.
-- **Giao Diện SSR Hiện Đại & Trực Quan**: Render trực tiếp phía Server với EJS, TailwindCSS, hiệu ứng Glassmorphism, micro-animations và Responsive tối ưu cho cả desktop lẫn thiết bị di động.
+- **Giao Diện SSR Hiện Đại & Trực Quan**: Render trực tiếp phía Server với EJS, TailwindCSS, hiệu ứng Glassmorphic, micro-animations và Responsive tối ưu cho cả desktop lẫn thiết bị di động.
+
+---
+
+## 🖼 Giao Diện Ứng Dụng (Screenshots)
+
+### 1. Form Lập Phiếu Nhập Kho Mới (Chuẩn Mẫu 01-VT)
+
+![Giao diện Lập Phiếu Nhập Kho Mới](src/public/images/receipt_create.png)
+
+### 2. Danh Sách Phiếu Nhập Kho & Tra Cứu Chứng Từ
+
+![Giao diện Danh Sách Phiếu Nhập Kho](src/public/images/receipts_list.png)
+
+### 3. Chi Tiết Phiếu Nhập Kho & In Ấn Chứng Từ (Chuẩn Mẫu 01-VT)
+
+![Giao diện Chi Tiết Phiếu Nhập Kho Mẫu 01-VT](src/public/images/receipt_detail.png)
 
 ---
 
@@ -132,6 +149,7 @@ Warehouse Test/
 │   │   ├── user/            # Module Người dùng & Phân quyền vai trò
 │   │   ├── item/            # Module Vật tư / Hàng hóa
 │   │   └── receipt/         # Module Lập & Quản lý Phiếu nhập kho (Mẫu 01-VT)
+│   ├── public/              # File tĩnh (Javascript client-side, Tailwind styles, Icons)
 │   ├── routes/              # Điều hướng chính của ứng dụng Express
 │   ├── utils/               # Helper xử lý lỗi (ErrorHandler) & Phân trang (Pagination)
 │   ├── views/               # Partial layouts, Header, Navigation Sidebar, Dashboard
@@ -204,7 +222,7 @@ npm run dev
 | `npm run build`        | Biên dịch TypeScript sang mã JavaScript nguyên bản trong thư mục`dist/` |
 | `npm run start`        | Chạy sản phẩm đã biên dịch trong thư mục`dist/server.js`              |
 | `npm run migrate`      | Thực thi tất cả các file Migration khởi tạo bảng PostgreSQL               |
-| `npm run migrate:undo` | Rollback Migration gần nhất                                                    |
+| `npm run migrate:undo` | Rollback Migration gần nhất                                me                  |
 | `npm run seed`         | Thực thi toàn bộ các file Seeder nạp dữ liệu mẫu                         |
 | `npm run seed:undo`    | Rollback Seeder gần nhất                                                       |
 
@@ -213,14 +231,16 @@ npm run dev
 ## 📜 Các Tính Năng & Route Chính
 
 - **Trang Chủ & Dashboard**: `GET /` - Tổng quan thống kê số liệu phiếu nhập, vật tư, kho hàng và nhà cung cấp.
-- **Danh Mục Đơn Vị Tính**: `GET /master/units` - Thêm, sửa, xóa, tìm kiếm & phân trang Đơn vị tính.
-- **Danh Mục Kho Hàng**: `GET /master/warehouses` - Quản lý thông tin nhà kho vật lý & địa điểm.
-- **Danh Mục Nhà Cung Cấp**: `GET /master/suppliers` - Quản lý danh sách nhà cung cấp & mã số thuế.
-- **Danh Mục Vật Tư / Hàng Hóa**: `GET /master/items` - Quản lý mã, tên vật tư, quy cách và đơn vị tính liên kết.
-- **Danh Mục Người Dùng & Vai Trò**: `GET /master/users` - Quản lý nhân sự và phân quyền 3 vai trò (`creator`, `keeper`, `accountant`).
-- **Quản Lý Phiếu Nhập Kho**:
-  - `GET /receipts` - Danh sách phiếu nhập kho có lọc tìm kiếm.
+- **Danh Mục Quản Trị Admin (Admin Namespace)**:
+  - **Đơn Vị Tính**: `GET /admin/units` - Thêm, sửa, xóa, tìm kiếm & phân trang Đơn vị tính.
+  - **Kho Hàng**: `GET /admin/warehouses` - Quản lý thông tin nhà kho vật lý & địa điểm.
+  - **Nhà Cung Cấp**: `GET /admin/suppliers` - Quản lý danh sách nhà cung cấp & mã số thuế.
+  - **Vật Tư / Hàng Hóa**: `GET /admin/items` - Quản lý mã, tên vật tư, quy cách và đơn vị tính liên kết.
+  - **Người Dùng & Vai Trò**: `GET /admin/users` - Quản lý nhân sự và phân quyền 3 vai trò (`creator`, `keeper`, `accountant`).
+- **Quản Lý Phiếu Nhập Kho (Mẫu 01-VT)**:
+  - `GET /receipts` - Danh sách phiếu nhập kho có lọc tìm kiếm & phân trang.
   - `GET /receipts/create` - Form lập phiếu nhập kho mới chuẩn Mẫu 01-VT.
   - `GET /receipts/:id` - Xem chi tiết phiếu nhập kho & in ấn chứng từ.
+  - `GET /receipts/:id/edit` - Chỉnh sửa phiếu nhập kho (trạng thái DRAFT).
 
 ---
