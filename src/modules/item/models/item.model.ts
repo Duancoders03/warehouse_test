@@ -86,5 +86,3 @@ Item.init(
     timestamps: false,
   }
 );
-
-Item.belongsTo(Unit, { foreignKey: 'unit_id', as: 'unit' });

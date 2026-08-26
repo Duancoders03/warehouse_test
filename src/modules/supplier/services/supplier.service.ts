@@ -39,6 +39,13 @@ export class SupplierService {
     };
   }
 
+  async getAllSuppliersList(): Promise<SupplierDto[]> {
+    const list = await Supplier.findAll({
+      order: [['code', 'ASC']],
+    });
+    return list.map(s => s.toJSON() as SupplierDto);
+  }
+
   async getSupplierById(id: string): Promise<SupplierDto | null> {
     const supplier = await Supplier.findByPk(id);
     return supplier ? (supplier.toJSON() as SupplierDto) : null;

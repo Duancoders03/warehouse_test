@@ -63,6 +63,7 @@ body {
     background-color: #ffffff !important;
     color: #000000 !important;
     font-size: 12pt;
+    font-family: 'Inter', Arial, sans-serif !important;
   }
 
   .no-print {

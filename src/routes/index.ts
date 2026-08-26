@@ -17,18 +17,19 @@ const router = Router();
 // Root Dashboard Route
 router.get('/', async (req, res, next) => {
   try {
-    const receipts = await receiptService.getAllReceipts();
+    const receiptData = await receiptService.getAllReceipts({ limit: 100 });
+    const receipts = receiptData.items;
     const items = await itemService.getItems();
     const warehouses = await warehouseService.getWarehouses();
     const suppliers = await supplierService.getSuppliers();
 
-    const totalAmount = receipts.reduce((acc, r) => acc + (r.total_amount || 0), 0);
+    const totalAmount = receipts.reduce((acc: number, r: any) => acc + (r.total_amount || 0), 0);
 
     res.render('pages/dashboard', {
       title: 'Trang Chủ & Tổng Quan Kho',
       currentNav: 'dashboard',
       stats: {
-        totalReceipts: receipts.length,
+        totalReceipts: receiptData.totalItems,
         totalAmount,
         itemsCount: items.totalItems,
         warehousesCount: warehouses.length,

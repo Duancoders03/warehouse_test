@@ -1,216 +1,364 @@
+import { Op, Transaction } from 'sequelize';
+import { sequelize } from '../../../config/database';
+import {
+  InventoryReceipt,
+  InventoryReceiptDetail,
+  Supplier,
+  Warehouse,
+  User,
+  Item,
+  Unit,
+} from '../../../models';
 import { InventoryReceiptDto, CreateReceiptDto } from '../dtos/receipt.dto';
-import { userService } from '../../user/services/user.service';
-
-const receiptsStore: InventoryReceiptDto[] = [
-  {
-    id: 'rec-001',
-    receipt_no: 'PNK-2026-08-001',
-    receipt_date: '2026-08-24',
-    original_document_no: 'HD-884920',
-    original_document_date: '2026-08-22',
-    deliverer_name: 'Nguyễn Văn Nam (Lái xe)',
-    supplier_id: 's-1',
-    supplier: { id: 's-1', code: 'NCC-HOAPAT', name: 'Tập đoàn Hòa Phát', address: 'KCN Phố Nối A, Hưng Yên', tax_code: '0100100101' },
-    warehouse_id: 'w-1',
-    warehouse: { id: 'w-1', code: 'KHO-TONG', name: 'Kho Tổng Trung Tâm VIMES', address: 'TP.HCM' },
-    debit_account: '152',
-    credit_account: '331',
-    total_amount: 154500000,
-    created_by_id: '33333333-3333-3333-3333-333333333301',
-    created_by: { id: '33333333-3333-3333-3333-333333333301', code: 'NV-001', full_name: 'Nguyễn Văn Lập (Kế Toán Kho)', department: 'Phòng Kế Toán', role: 'creator' },
-    keeper_id: '33333333-3333-3333-3333-333333333303',
-    keeper: { id: '33333333-3333-3333-3333-333333333303', code: 'NV-003', full_name: 'Lê Văn Khoa (Thủ Kho)', department: 'Ban Quản Lý Kho', role: 'keeper' },
-    accountant_id: '33333333-3333-3333-3333-333333333302',
-    accountant: { id: '33333333-3333-3333-3333-333333333302', code: 'NV-002', full_name: 'Trần Thị Thu (Kế Toán Trưởng)', department: 'Phòng Kế Toán', role: 'accountant' },
-    created_at: '2026-08-24T08:30:00.000Z',
-    details: [
-      {
-        id: 'det-1',
-        receipt_id: 'rec-001',
-        line_number: 1,
-        item_id: 'i-1',
-        item_code: 'VT-THEP-01',
-        item_name: 'Thép phi 12 Hòa Phát (D12 CB300-V)',
-        specifications: 'Đường kính 12mm, chiều dài 11.7m',
-        unit_id: 'u-1',
-        unit_name: 'Kilôgam',
-        warehouse_id: 'w-1',
-        warehouse_name: 'Kho Tổng Trung Tâm VIMES',
-        document_quantity: 5000,
-        actual_quantity: 5000,
-        unit_price: 24500,
-        amount: 122500000,
-      },
-      {
-        id: 'det-2',
-        receipt_id: 'rec-001',
-        line_number: 2,
-        item_id: 'i-3',
-        item_code: 'VT-CB-03',
-        item_name: 'Aptomat MCB Schneider 2P 32A',
-        specifications: 'Dòng định mức 32A, cắt ngắn mạch 4.5kA',
-        unit_id: 'u-2',
-        unit_name: 'Cái',
-        warehouse_id: 'w-1',
-        warehouse_name: 'Kho Tổng Trung Tâm VIMES',
-        document_quantity: 40,
-        actual_quantity: 40,
-        unit_price: 800000,
-        amount: 32000000,
-      }
-    ]
-  },
-  {
-    id: 'rec-002',
-    receipt_no: 'PNK-2026-08-002',
-    receipt_date: '2026-08-23',
-    original_document_no: 'PXK-1029',
-    original_document_date: '2026-08-23',
-    deliverer_name: 'Trần Quốc Tuấn',
-    supplier_id: 's-2',
-    supplier: { id: 's-2', code: 'NCC-CADIVI', name: 'Công ty Cổ phần Dây cáp điện Việt Nam (CADIVI)', address: 'TP.HCM', tax_code: '0300381564' },
-    warehouse_id: 'w-2',
-    warehouse: { id: 'w-2', code: 'KHO-VT1', name: 'Kho Vật Tư 01 - Cầu Giấy', address: 'Hà Nội' },
-    debit_account: '1521',
-    credit_account: '1111',
-    total_amount: 47500000,
-    created_by_id: '33333333-3333-3333-3333-333333333301',
-    created_by: { id: '33333333-3333-3333-3333-333333333301', code: 'NV-001', full_name: 'Nguyễn Văn Lập (Kế Toán Kho)', department: 'Phòng Kế Toán', role: 'creator' },
-    keeper_id: '33333333-3333-3333-3333-333333333304',
-    keeper: { id: '33333333-3333-3333-3333-333333333304', code: 'NV-004', full_name: 'Phạm Minh Tuấn (Thủ Kho)', department: 'Ban Quản Lý Kho', role: 'keeper' },
-    accountant_id: '33333333-3333-3333-3333-333333333302',
-    accountant: { id: '33333333-3333-3333-3333-333333333302', code: 'NV-002', full_name: 'Trần Thị Thu (Kế Toán Trưởng)', department: 'Phòng Kế Toán', role: 'accountant' },
-    created_at: '2026-08-23T14:15:00.000Z',
-    details: [
-      {
-        id: 'det-3',
-        receipt_id: 'rec-002',
-        line_number: 1,
-        item_id: 'i-2',
-        item_code: 'VT-CAP-02',
-        item_name: 'Cáp điện CADIVI 2x2.5mm2',
-        specifications: 'Cáp điện lực hạ thế 0.6/1kV',
-        unit_id: 'u-3',
-        unit_name: 'Mét',
-        warehouse_id: 'w-2',
-        warehouse_name: 'Kho Vật Tư 01 - Cầu Giấy',
-        document_quantity: 1000,
-        actual_quantity: 950,
-        unit_price: 50000,
-        amount: 47500000,
-      }
-    ]
-  }
-];
+import { handleSequelizeValidationError } from '../../../utils/error-handler';
+import { getPaginationParams, PaginatedResult } from '../../../utils/pagination';
 
 export class ReceiptService {
-  async getAllReceipts(query?: { keyword?: string; warehouse_id?: string; supplier_id?: string; from_date?: string; to_date?: string }): Promise<InventoryReceiptDto[]> {
-    let result = [...receiptsStore];
+  /**
+   * Lấy danh sách phiếu nhập kho (Có tìm kiếm, lọc theo ngày, kho, nhà cung cấp, trạng thái, phân trang)
+   */
+  async getAllReceipts(query?: {
+    keyword?: string;
+    warehouse_id?: string;
+    supplier_id?: string;
+    status?: string;
+    from_date?: string;
+    to_date?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<PaginatedResult<InventoryReceiptDto>> {
+    const { page, limit, offset } = getPaginationParams(query?.page, query?.limit, 10);
+    const whereCondition: any = {};
 
-    if (query?.keyword) {
-      const kw = query.keyword.toLowerCase();
-      result = result.filter(r => 
-        r.receipt_no.toLowerCase().includes(kw) ||
-        r.original_document_no?.toLowerCase().includes(kw) ||
-        r.deliverer_name?.toLowerCase().includes(kw) ||
-        r.supplier?.name.toLowerCase().includes(kw)
-      );
+    if (query?.keyword && query.keyword.trim()) {
+      const q = `%${query.keyword.trim().toLowerCase()}%`;
+      whereCondition[Op.or] = [
+        { receipt_no: { [Op.iLike]: q } },
+        { original_document_no: { [Op.iLike]: q } },
+        { deliverer_name: { [Op.iLike]: q } },
+      ];
     }
 
     if (query?.warehouse_id) {
-      result = result.filter(r => r.warehouse_id === query.warehouse_id);
+      whereCondition.warehouse_id = query.warehouse_id;
     }
 
     if (query?.supplier_id) {
-      result = result.filter(r => r.supplier_id === query.supplier_id);
+      whereCondition.supplier_id = query.supplier_id;
     }
 
-    if (query?.from_date) {
-      result = result.filter(r => r.receipt_date >= query.from_date!);
+    if (query?.status) {
+      whereCondition.status = query.status;
     }
 
-    if (query?.to_date) {
-      result = result.filter(r => r.receipt_date <= query.to_date!);
+    if (query?.from_date || query?.to_date) {
+      whereCondition.receipt_date = {};
+      if (query.from_date) {
+        whereCondition.receipt_date[Op.gte] = query.from_date;
+      }
+      if (query.to_date) {
+        whereCondition.receipt_date[Op.lte] = query.to_date;
+      }
     }
 
-    return result.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
-  }
-
-  async getReceiptById(id: string): Promise<InventoryReceiptDto | null> {
-    const receipt = receiptsStore.find(r => r.id === id || r.receipt_no === id);
-    return receipt ? JSON.parse(JSON.stringify(receipt)) : null;
-  }
-
-  async createReceipt(dto: CreateReceiptDto): Promise<InventoryReceiptDto> {
-    const id = `rec-${Date.now()}`;
-    const createdBy = (await userService.getUserById(dto.created_by_id)) || undefined;
-    const keeper = dto.keeper_id ? ((await userService.getUserById(dto.keeper_id)) || undefined) : undefined;
-    const accountant = dto.accountant_id ? ((await userService.getUserById(dto.accountant_id)) || undefined) : undefined;
-
-    let total_amount = 0;
-    const details = dto.details.map((item, index) => {
-      const amount = Number(item.actual_quantity) * Number(item.unit_price);
-      total_amount += amount;
-
-      return {
-        id: `det-${id}-${index + 1}`,
-        receipt_id: id,
-        line_number: index + 1,
-        item_id: item.item_id,
-        item_code: 'VT-CHON',
-        item_name: 'Vật tư nhập kho',
-        specifications: '',
-        unit_id: item.unit_id,
-        unit_name: 'Cái',
-        warehouse_id: item.warehouse_id,
-        warehouse_name: 'Kho mặc định',
-        document_quantity: Number(item.document_quantity),
-        actual_quantity: Number(item.actual_quantity),
-        unit_price: Number(item.unit_price),
-        amount,
-      };
+    const { count, rows } = await InventoryReceipt.findAndCountAll({
+      where: whereCondition,
+      include: [
+        { model: Supplier, as: 'supplier' },
+        { model: Warehouse, as: 'warehouse' },
+        { model: User, as: 'created_by' },
+        { model: User, as: 'keeper' },
+        { model: User, as: 'accountant' },
+        {
+          model: InventoryReceiptDetail,
+          as: 'details',
+          include: [
+            { model: Item, as: 'item' },
+            { model: Unit, as: 'unit' },
+            { model: Warehouse, as: 'actual_warehouse' },
+          ],
+        },
+      ],
+      order: [['created_at', 'DESC']],
+      limit,
+      offset,
+      distinct: true,
     });
 
-    const newReceipt: InventoryReceiptDto = {
-      id,
-      receipt_no: dto.receipt_no || `PNK-${new Date().toISOString().slice(0,10).replace(/-/g,'')}-${Math.floor(100+Math.random()*900)}`,
-      receipt_date: dto.receipt_date || new Date().toISOString().split('T')[0],
-      original_document_no: dto.original_document_no,
-      original_document_date: dto.original_document_date,
-      deliverer_name: dto.deliverer_name,
-      supplier_id: dto.supplier_id,
-      debit_account: dto.debit_account || '152',
-      credit_account: dto.credit_account || '331',
-      total_amount,
-      created_by_id: dto.created_by_id,
-      created_by: createdBy,
-      keeper_id: dto.keeper_id,
-      keeper,
-      accountant_id: dto.accountant_id,
-      accountant,
-      details,
-      created_at: new Date().toISOString(),
+    const receipts = rows.map((r) => this.mapToDto(r));
+    const totalPages = Math.ceil(count / limit) || 1;
+
+    return {
+      items: receipts,
+      totalItems: count,
+      currentPage: page,
+      totalPages,
+      pageSize: limit,
     };
-
-    receiptsStore.unshift(newReceipt);
-    return newReceipt;
   }
 
-  async deleteReceipt(id: string): Promise<boolean> {
-    const idx = receiptsStore.findIndex(r => r.id === id);
-    if (idx !== -1) {
-      receiptsStore.splice(idx, 1);
-      return true;
+  /**
+   * Lấy chi tiết phiếu nhập kho theo ID
+   */
+  async getReceiptById(id: string, transaction?: Transaction): Promise<InventoryReceiptDto | null> {
+    const receipt = await InventoryReceipt.findByPk(id, {
+      include: [
+        { model: Supplier, as: 'supplier' },
+        { model: Warehouse, as: 'warehouse' },
+        { model: User, as: 'created_by' },
+        { model: User, as: 'keeper' },
+        { model: User, as: 'accountant' },
+        {
+          model: InventoryReceiptDetail,
+          as: 'details',
+          include: [
+            { model: Item, as: 'item' },
+            { model: Unit, as: 'unit' },
+            { model: Warehouse, as: 'actual_warehouse' },
+          ],
+        },
+      ],
+      transaction,
+    });
+
+    return receipt ? this.mapToDto(receipt) : null;
+  }
+
+  /**
+   * Tạo mới phiếu nhập kho (Sử dụng DB Transaction)
+   */
+  async createReceipt(dto: CreateReceiptDto): Promise<InventoryReceiptDto> {
+    try {
+      if (!dto.details || !Array.isArray(dto.details) || dto.details.length === 0) {
+        throw new Error('Phiếu nhập kho phải có ít nhất 1 dòng chi tiết vật tư.');
+      }
+
+      return await sequelize.transaction(async (transaction) => {
+        let totalAmount = 0;
+        const detailsData = dto.details.map((item) => {
+          const docQty = Number(item.document_quantity) || 0;
+          const actQty = Number(item.actual_quantity) || 0;
+          const price = Number(item.unit_price) || 0;
+          const amount = actQty * price;
+          totalAmount += amount;
+
+          return {
+            item_id: item.item_id,
+            unit_id: item.unit_id,
+            warehouse_id: item.warehouse_id || dto.warehouse_id || null,
+            document_quantity: docQty,
+            actual_quantity: actQty,
+            unit_price: price,
+            amount,
+          };
+        });
+
+        const receipt_no = dto.receipt_no || (await this.generateNextReceiptNo());
+        const newReceipt = await InventoryReceipt.create(
+          {
+            receipt_no,
+            receipt_date: dto.receipt_date || new Date().toISOString().split('T')[0],
+            original_document_no: dto.original_document_no || undefined,
+            original_document_date: dto.original_document_date || undefined,
+            deliverer_name: dto.deliverer_name || undefined,
+            supplier_id: dto.supplier_id || undefined,
+            warehouse_id: dto.warehouse_id || undefined,
+            debit_account: dto.debit_account || '0',
+            credit_account: dto.credit_account || '0',
+            total_amount: totalAmount,
+            status: dto.status || 'DRAFT',
+            created_by_id: dto.created_by_id,
+            keeper_id: dto.keeper_id || undefined,
+            accountant_id: dto.accountant_id || undefined,
+          },
+          { transaction }
+        );
+
+        const detailsToCreate = detailsData.map((d) => ({
+          ...d,
+          receipt_id: newReceipt.id,
+        }));
+
+        await InventoryReceiptDetail.bulkCreate(detailsToCreate as any, { transaction, validate: true });
+
+        const fullReceipt = await this.getReceiptById(newReceipt.id, transaction);
+        return fullReceipt!;
+      });
+    } catch (error: any) {
+      handleSequelizeValidationError(error);
+      throw error;
     }
-    return false;
   }
 
-  generateNextReceiptNo(): string {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const seq = String(receiptsStore.length + 1).padStart(3, '0');
-    return `PNK-${yyyy}-${mm}-${seq}`;
+  /**
+   * Cập nhật phiếu nhập kho (Sử dụng DB Transaction)
+   */
+  async updateReceipt(id: string, dto: Partial<CreateReceiptDto>): Promise<InventoryReceiptDto | null> {
+    try {
+      return await sequelize.transaction(async (transaction) => {
+        const receipt = await InventoryReceipt.findByPk(id, { transaction });
+        if (!receipt) return null;
+
+        let totalAmount = receipt.total_amount;
+
+        if (dto.details && Array.isArray(dto.details)) {
+          await InventoryReceiptDetail.destroy({ where: { receipt_id: id }, transaction });
+
+          totalAmount = 0;
+          const detailsData = dto.details.map((item) => {
+            const docQty = Number(item.document_quantity) || 0;
+            const actQty = Number(item.actual_quantity) || 0;
+            const price = Number(item.unit_price) || 0;
+            const amount = actQty * price;
+            totalAmount += amount;
+
+            return {
+              receipt_id: id,
+              item_id: item.item_id,
+              unit_id: item.unit_id,
+              warehouse_id: item.warehouse_id || dto.warehouse_id || receipt.warehouse_id || null,
+              document_quantity: docQty,
+              actual_quantity: actQty,
+              unit_price: price,
+              amount,
+            };
+          });
+
+          await InventoryReceiptDetail.bulkCreate(detailsData as any, { transaction, validate: true });
+        }
+
+        await receipt.update(
+          {
+            ...(dto.receipt_no && { receipt_no: dto.receipt_no }),
+            ...(dto.receipt_date && { receipt_date: dto.receipt_date }),
+            ...(dto.original_document_no !== undefined && { original_document_no: dto.original_document_no }),
+            ...(dto.original_document_date !== undefined && { original_document_date: dto.original_document_date }),
+            ...(dto.deliverer_name !== undefined && { deliverer_name: dto.deliverer_name }),
+            ...(dto.supplier_id !== undefined && { supplier_id: dto.supplier_id }),
+            ...(dto.warehouse_id !== undefined && { warehouse_id: dto.warehouse_id }),
+            ...(dto.debit_account !== undefined && { debit_account: dto.debit_account }),
+            ...(dto.credit_account !== undefined && { credit_account: dto.credit_account }),
+            ...(dto.status && { status: dto.status }),
+            ...(dto.created_by_id && { created_by_id: dto.created_by_id }),
+            ...(dto.keeper_id !== undefined && { keeper_id: dto.keeper_id }),
+            ...(dto.accountant_id !== undefined && { accountant_id: dto.accountant_id }),
+            total_amount: totalAmount,
+          },
+          { transaction }
+        );
+
+        const updatedReceipt = await this.getReceiptById(id, transaction);
+        return updatedReceipt;
+      });
+    } catch (error: any) {
+      handleSequelizeValidationError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Xóa phiếu nhập kho (Không cho phép xóa phiếu đã phát hành - PUBLIC)
+   */
+  async deleteReceipt(id: string): Promise<boolean> {
+    const receipt = await InventoryReceipt.findByPk(id);
+    if (!receipt) {
+      throw new Error('Không tìm thấy phiếu nhập kho để xóa.');
+    }
+    if (receipt.status === 'PUBLIC') {
+      throw new Error('Không thể xóa phiếu nhập kho đã phát hành (PUBLIC). Vui lòng hủy phiếu trước khi xóa.');
+    }
+    const deletedCount = await InventoryReceipt.destroy({ where: { id } });
+    return deletedCount > 0;
+  }
+
+  /**
+   * Cập nhật trạng thái phiếu nhập kho (DRAFT, PUBLIC, CANCEL)
+   */
+  async updateStatus(id: string, status: 'DRAFT' | 'PUBLIC' | 'CANCEL'): Promise<InventoryReceiptDto | null> {
+    try {
+      const receipt = await InventoryReceipt.findByPk(id);
+      if (!receipt) {
+        throw new Error('Không tìm thấy phiếu nhập kho.');
+      }
+
+      receipt.status = status;
+      await receipt.save();
+      return this.getReceiptById(id);
+    } catch (error: any) {
+      handleSequelizeValidationError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Tự động sinh mã phiếu nhập kho tiếp theo (VD: NK000001, NK000002)
+   */
+  async generateNextReceiptNo(): Promise<string> {
+    const latestReceipt = await InventoryReceipt.findOne({
+      order: [['created_at', 'DESC']],
+      attributes: ['receipt_no'],
+    });
+
+    if (!latestReceipt || !latestReceipt.receipt_no) {
+      return 'NK000001';
+    }
+
+    const match = latestReceipt.receipt_no.match(/^NK(\d+)$/);
+    if (!match) {
+      return `NK${Date.now().toString().slice(-6)}`;
+    }
+
+    const currentNumber = parseInt(match[1], 10);
+    const nextNumber = currentNumber + 1;
+    return `NK${nextNumber.toString().padStart(6, '0')}`;
+  }
+
+  /**
+   * Chuyển đổi Model sang DTO
+   */
+  private mapToDto(receipt: InventoryReceipt): InventoryReceiptDto {
+    const plain = receipt.toJSON() as any;
+
+    return {
+      id: plain.id,
+      receipt_no: plain.receipt_no,
+      receipt_date: plain.receipt_date,
+      original_document_no: plain.original_document_no,
+      original_document_date: plain.original_document_date,
+      deliverer_name: plain.deliverer_name,
+      supplier_id: plain.supplier_id,
+      supplier: plain.supplier,
+      warehouse_id: plain.warehouse_id,
+      warehouse: plain.warehouse,
+      debit_account: plain.debit_account,
+      credit_account: plain.credit_account,
+      total_amount: Number(plain.total_amount) || 0,
+      status: plain.status || 'DRAFT',
+      created_by_id: plain.created_by_id,
+      created_by: plain.created_by,
+      keeper_id: plain.keeper_id,
+      keeper: plain.keeper,
+      accountant_id: plain.accountant_id,
+      accountant: plain.accountant,
+      created_at: plain.created_at,
+      details: (plain.details || []).map((det: any, index: number) => ({
+        id: det.id,
+        receipt_id: det.receipt_id,
+        line_number: index + 1,
+        item_id: det.item_id,
+        item_code: det.item?.code || '',
+        item_name: det.item?.name || '',
+        specifications: det.item?.specifications || '',
+        unit_id: det.unit_id,
+        unit_name: det.unit?.name || '',
+        warehouse_id: det.warehouse_id,
+        warehouse_name: det.actual_warehouse?.name || plain.warehouse?.name || '',
+        document_quantity: Number(det.document_quantity) || 0,
+        actual_quantity: Number(det.actual_quantity) || 0,
+        unit_price: Number(det.unit_price) || 0,
+        amount: Number(det.amount) || 0,
+      })),
+    };
   }
 }
 
@@ -219,7 +367,7 @@ export const receiptService = new ReceiptService();
 export function numberToVietnameseWords(amount: number): string {
   if (amount === 0) return 'Không đồng';
   const defaultNumbers = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
-  
+
   function readTriple(num: number): string {
     let hundred = Math.floor(num / 100);
     let ten = Math.floor((num % 100) / 10);
@@ -250,7 +398,7 @@ export function numberToVietnameseWords(amount: number): string {
   const units = ['', 'nghìn', 'triệu', 'tỷ', 'nghìn tỷ', 'triệu tỷ'];
   let strAmount = Math.floor(amount).toString();
   let triples: number[] = [];
-  
+
   while (strAmount.length > 0) {
     let chunk = strAmount.slice(-3);
     triples.push(parseInt(chunk, 10));

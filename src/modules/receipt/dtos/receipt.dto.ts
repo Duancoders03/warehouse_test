@@ -6,7 +6,7 @@ import { UserDto } from '../../user/dtos/user.dto';
 export interface InventoryReceiptDetailDto {
   id?: string;
   receipt_id?: string;
-  line_number: number;
+  line_number?: number;
   item_id: string;
   item_code?: string;
   item_name?: string;
@@ -35,6 +35,7 @@ export interface InventoryReceiptDto {
   debit_account?: string;
   credit_account?: string;
   total_amount: number;
+  status: 'DRAFT' | 'PUBLIC' | 'CANCEL';
   created_by_id: string;
   created_by?: UserDto;
   keeper_id?: string;
@@ -55,6 +56,7 @@ export interface CreateReceiptDto {
   warehouse_id?: string;
   debit_account?: string;
   credit_account?: string;
+  status?: 'DRAFT' | 'PUBLIC' | 'CANCEL';
   created_by_id: string;
   keeper_id?: string;
   accountant_id?: string;

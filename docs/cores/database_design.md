@@ -15,7 +15,7 @@ Hệ thống được thiết kế tối giản, loại bỏ mọi trường d�
 
 2. **2 Bảng Giao dịch Phiếu Nhập**:
    - `inventory_receipts` (Header): Thông tin chung phiếu nhập (Số phiếu, Ngày nhập, Chứng từ gốc, Nợ/Có, Người lập, Thủ kho, Kế toán trưởng).
-   - `inventory_receipt_details` (Detail): Đúng **8 CỘT** Mẫu 01-VT (STT, Mã & Tên vật tư, Đơn vị tính, Số lượng chứng từ, Số lượng thực nhập, Đơn giá, Thành tiền, Kho thực nhập).
+   - `inventory_receipt_details` (Detail): Đúng Mẫu 01-VT (Mã & Tên vật tư, Đơn vị tính, Số lượng chứng từ, Số lượng thực nhập, Đơn giá, Thành tiền, Kho thực nhập).
 
 ---
 
@@ -83,6 +83,7 @@ erDiagram
         string debit_account
         string credit_account
         decimal total_amount
+        string status "DRAFT | PUBLIC | CANCEL"
         uuid created_by_id FK
         uuid keeper_id FK
         uuid accountant_id FK
@@ -91,7 +92,6 @@ erDiagram
     inventory_receipt_details {
         uuid id PK
         uuid receipt_id FK
-        int line_number
         uuid item_id FK
         uuid unit_id FK
         uuid warehouse_id FK
@@ -183,10 +183,12 @@ erDiagram
 | `debit_account` | VARCHAR(20) | NULL | **Tài khoản Nợ** (VD: 152) |
 | `credit_account` | VARCHAR(20) | NULL | **Tài khoản Có** (VD: 331) |
 | `total_amount` | NUMERIC(18,2) | DEFAULT 0, CHECK >= 0 | **Tổng số tiền phiếu** |
+| `status` | ENUM | NOT NULL, DEFAULT 'DRAFT' | **Trạng thái phiếu**: `'DRAFT'` (Bản nháp), `'PUBLIC'` (Đã phát hành), `'CANCEL'` (Đã hủy) |
 | `created_by_id` | UUID | FK -> `users`, NOT NULL | **Người lập phiếu (Ký, họ tên)** (`role = 'CREATOR'`) |
 | `keeper_id` | UUID | FK -> `users` | **Thủ kho (Ký, họ tên)** (`role = 'KEEPER'`) |
 | `accountant_id` | UUID | FK -> `users` | **Kế toán trưởng (Ký, họ tên)** (`role = 'ACCOUNTANT'`) |
-| `created_at` | TIMESTAMPTZ | DEFAULT CURRENT_TIMESTAMP | Thời gian tạo trên hệ thống |
+| `created_at` | TIMESTAMPTZ | DEFAULT CURRENT_TIMESTAMP | Thời gian tạo bản ghi |
+| `updated_at` | TIMESTAMPTZ | DEFAULT CURRENT_TIMESTAMP | Thời gian cập nhật bản ghi |
 
 ---
 
@@ -195,7 +197,6 @@ erDiagram
 | :--- | :--- | :--- | :--- |
 | `id` | UUID | PK | Khóa chính dòng |
 | `receipt_id` | UUID | FK -> `inventory_receipts`, NOT NULL | Khóa ngoại trỏ tới Header (ON DELETE CASCADE) |
-| `line_number` | INT | NOT NULL | **Cột A**: STT dòng (1, 2, 3...) |
 | `item_id` | UUID | FK -> `items`, NOT NULL | **Cột B & C**: Mã số & Tên quy cách vật tư |
 | `unit_id` | UUID | FK -> `units`, NOT NULL | **Cột D**: Đơn vị tính |
 | `document_quantity` | NUMERIC(12,3) | NOT NULL, CHECK >= 0 | **Cột 1**: Số lượng theo chứng từ |
@@ -254,6 +255,8 @@ CREATE TABLE items (
 );
 
 -- 6. Bảng Header Phiếu nhập kho (Tối giản 3 chữ ký)
+CREATE TYPE receipt_status_enum AS ENUM ('DRAFT', 'PUBLIC', 'CANCEL');
+
 CREATE TABLE inventory_receipts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     receipt_no VARCHAR(50) NOT NULL UNIQUE,
@@ -266,24 +269,24 @@ CREATE TABLE inventory_receipts (
     debit_account VARCHAR(20),
     credit_account VARCHAR(20),
     total_amount NUMERIC(18, 2) DEFAULT 0 CHECK (total_amount >= 0),
+    status receipt_status_enum NOT NULL DEFAULT 'DRAFT',
     created_by_id UUID NOT NULL REFERENCES users(id), -- 1. Người lập (role = 'CREATOR')
     keeper_id UUID REFERENCES users(id),              -- 2. Thủ kho nhận (role = 'KEEPER')
     accountant_id UUID REFERENCES users(id),          -- 3. Kế toán trưởng duyệt (role = 'ACCOUNTANT')
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 7. Bảng Detail (Chi tiết 8 cột + Hỗ trợ Nhập đa kho)
 CREATE TABLE inventory_receipt_details (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     receipt_id UUID NOT NULL REFERENCES inventory_receipts(id) ON DELETE CASCADE,
-    line_number INT NOT NULL,
     item_id UUID NOT NULL REFERENCES items(id),
     unit_id UUID NOT NULL REFERENCES units(id),
     warehouse_id UUID REFERENCES warehouses(id), -- Kho thực nhập từng dòng
     document_quantity NUMERIC(12, 3) NOT NULL CHECK (document_quantity >= 0),
     actual_quantity NUMERIC(12, 3) NOT NULL CHECK (actual_quantity >= 0),
     unit_price NUMERIC(18, 2) NOT NULL CHECK (unit_price >= 0),
-    amount NUMERIC(18, 2) GENERATED ALWAYS AS (actual_quantity * unit_price) STORED,
-    CONSTRAINT uk_receipt_line_number UNIQUE (receipt_id, line_number)
+    amount NUMERIC(18, 2) GENERATED ALWAYS AS (actual_quantity * unit_price) STORED
 );
 ```
