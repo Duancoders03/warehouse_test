@@ -133,6 +133,11 @@ export class ReceiptService {
         throw new Error('Phiếu nhập kho phải có ít nhất 1 dòng chi tiết vật tư.');
       }
 
+      const itemIds = dto.details.map((d) => d.item_id).filter(Boolean);
+      if (new Set(itemIds).size !== itemIds.length) {
+        throw new Error('Vật tư / hàng hóa không được chọn trùng lặp trong cùng một phiếu nhập kho.');
+      }
+
       return await sequelize.transaction(async (transaction) => {
         let totalAmount = 0;
         const detailsData = dto.details.map((item) => {
@@ -202,6 +207,11 @@ export class ReceiptService {
         let totalAmount = receipt.total_amount;
 
         if (dto.details && Array.isArray(dto.details)) {
+          const itemIds = dto.details.map((d) => d.item_id).filter(Boolean);
+          if (new Set(itemIds).size !== itemIds.length) {
+            throw new Error('Vật tư / hàng hóa không được chọn trùng lặp trong cùng một phiếu nhập kho.');
+          }
+
           await InventoryReceiptDetail.destroy({ where: { receipt_id: id }, transaction });
 
           totalAmount = 0;

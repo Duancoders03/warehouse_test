@@ -78,6 +78,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Update available product options across all dropdowns (hide already selected products)
+  function updateProductOptions() {
+    const allSelects = tableBody.querySelectorAll(".item-select");
+    const selectedIds = new Set();
+    allSelects.forEach((select) => {
+      if (select.value) {
+        selectedIds.add(select.value);
+      }
+    });
+
+    allSelects.forEach((select) => {
+      const currentValue = select.value;
+      Array.from(select.options).forEach((option) => {
+        if (!option.value) return;
+
+        if (selectedIds.has(option.value) && option.value !== currentValue) {
+          option.hidden = true;
+          option.style.display = "none";
+          option.disabled = true;
+        } else {
+          option.hidden = false;
+          option.style.display = "";
+          option.disabled = false;
+        }
+      });
+    });
+  }
+
   // Handle Item selection change to fill Unit and pre-fill item info
   function handleItemChange(event) {
     const select = event.target;
@@ -96,6 +124,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (specInput) {
       specInput.value = selectedOption.dataset.spec || "";
     }
+
+    updateProductOptions();
   }
 
   // Add new item row to the table
@@ -133,6 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     tableBody.appendChild(newRow);
     updateTotals();
+    updateProductOptions();
   }
 
   // Attach event listeners to row inputs
@@ -165,6 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         row.remove();
         updateTotals();
+        updateProductOptions();
       });
     }
   }
@@ -354,6 +386,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
+      const selectedItemIds = details.map((d) => d.item_id).filter(Boolean);
+      if (new Set(selectedItemIds).size !== selectedItemIds.length) {
+        showNotification(
+          "error",
+          "Vui lòng không chọn trùng lặp vật tư / hàng hóa trong cùng một phiếu nhập!",
+        );
+        return;
+      }
+
       const payload = {
         receipt_no: receiptNo,
         receipt_date: receiptDate,
@@ -405,4 +446,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initial calculation on page load
   updateTotals();
+  updateProductOptions();
 });
