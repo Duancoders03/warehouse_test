@@ -10,12 +10,12 @@ Hệ thống được thiết kế tối giản, loại bỏ mọi trường d�
    - `units`: Đơn vị tính.
    - `suppliers`: Nhà cung cấp.
    - `warehouses`: Kho hàng (Chỉ chứa thông tin nhà kho vật lý: Mã kho, Tên kho, Địa điểm).
-   - `employees`: Nhân viên / Con người (Chứa Họ tên, Chức vụ/Vai trò và địa điểm kho công tác).
+   - `users`: Người dùng / Nhân viên (Chứa Họ tên, Chức vụ/Vai trò và Phòng ban; linh hoạt ký duyệt và thao tác trên N nhà kho mà không bị gán cố định).
    - `items`: Vật tư / Hàng hóa.
 
 2. **2 Bảng Giao dịch Phiếu Nhập**:
-   - `inventory_receipts` (Header): Thông tin chung phiếu nhập (Số phiếu, Ngày nhập, Chứng từ gốc, Nợ/Có, Người lập, Thủ kho).
-   - `inventory_receipt_details` (Detail): Đúng **8 CỘT** Mẫu 01-VT (STT, Mã & Tên vật tư, Đơn vị tính, Số lượng chứng từ, Số lượng thực nhập, Đơn giá, Thành tiền, Kho thực nhập).
+   - `inventory_receipts` (Header): Thông tin chung phiếu nhập (Số phiếu, Ngày nhập, Chứng từ gốc, Nợ/Có, Người lập, Thủ kho, Kế toán trưởng).
+   - `inventory_receipt_details` (Detail): Đúng Mẫu 01-VT (Mã & Tên vật tư, Đơn vị tính, Số lượng chứng từ, Số lượng thực nhập, Đơn giá, Thành tiền, Kho thực nhập).
 
 ---
 
@@ -27,10 +27,9 @@ erDiagram
     units ||--o{ inventory_receipt_details : "đơn_vị_tính"
     suppliers ||--o{ inventory_receipts : "cung_cấp"
     warehouses ||--o{ inventory_receipts : "lưu_kho"
-    warehouses ||--o{ employees : "phân_công"
-    employees ||--o{ inventory_receipts : "lập_phiếu (created_by_id)"
-    employees ||--o{ inventory_receipts : "thủ_kho (keeper_id)"
-    employees ||--o{ inventory_receipts : "kế_toán_trưởng (accountant_id)"
+    users ||--o{ inventory_receipts : "lập_phiếu (created_by_id)"
+    users ||--o{ inventory_receipts : "thủ_kho (keeper_id)"
+    users ||--o{ inventory_receipts : "kế_toán_trưởng (accountant_id)"
     
     inventory_receipts ||--|{ inventory_receipt_details : "chứa"
     items ||--o{ inventory_receipt_details : "chi_tiết"
@@ -56,13 +55,12 @@ erDiagram
         string address
     }
 
-    employees {
+    users {
         uuid id PK
         string code UK
         string full_name
         string department
         string role "CREATOR | KEEPER | ACCOUNTANT"
-        uuid warehouse_id FK
     }
 
     items {
@@ -85,6 +83,7 @@ erDiagram
         string debit_account
         string credit_account
         decimal total_amount
+        string status "DRAFT | PUBLIC | CANCEL"
         uuid created_by_id FK
         uuid keeper_id FK
         uuid accountant_id FK
@@ -93,7 +92,6 @@ erDiagram
     inventory_receipt_details {
         uuid id PK
         uuid receipt_id FK
-        int line_number
         uuid item_id FK
         uuid unit_id FK
         uuid warehouse_id FK
@@ -138,15 +136,18 @@ erDiagram
 
 ---
 
-### 3.4. Bảng `employees` (Nhân viên / Người dùng)
+### 3.4. Bảng `users` (Người dùng / Nhân viên)
 | Tên Trường | Kiểu Dữ Liệu | Ràng Buộc | Mô Tả |
 | :--- | :--- | :--- | :--- |
 | `id` | UUID | PK, DEFAULT uuid_generate_v4() | Mã định danh duy nhất |
-| `code` | VARCHAR(50) | UNIQUE, NOT NULL | Mã nhân viên |
-| `full_name` | VARCHAR(100) | NOT NULL | Họ và tên nhân viên |
+| `code` | VARCHAR(50) | UNIQUE, NOT NULL | Mã người dùng / nhân viên |
+| `full_name` | VARCHAR(100) | NOT NULL | Họ và tên người dùng |
 | `department` | VARCHAR(100) | NULL | Phòng ban |
 | `role` | VARCHAR(50) | NOT NULL, CHECK | **3 Vai trò**: `'CREATOR'` (Người lập), `'KEEPER'` (Thủ kho), `'ACCOUNTANT'` (Kế toán trưởng) |
-| `warehouse_id` | UUID | FK -> `warehouses` | Kho phụ trách (Phân công nhân sự theo Kho) |
+
+> [!TIP]
+> **Thay đổi nghiệp vụ linh hoạt (Lập & Ký duyệt Đa Kho)**:
+> Bảng `users` không gắn cố định khóa ngoại `warehouse_id`. Người dùng/nhân viên có vai trò phù hợp có thể linh hoạt lập phiếu, tiếp nhận hoặc ký duyệt hóa đơn/phiếu nhập trên **N nhà kho** khác nhau theo thẩm quyền được giao.
 
 ---
 
@@ -164,7 +165,7 @@ erDiagram
 > [!NOTE]
 > **Ánh xạ 2 dòng góc trên bên trái Mẫu 01-VT**:
 > * **`Đơn vị`**: Tên Công ty / Chi nhánh sở hữu hệ thống (Lấy từ Cấu hình hệ thống `.env` hoặc Cấu hình Doanh nghiệp: `COMPANY_NAME = "Công ty VIMES"`).
-> * **`Bộ phận`**: Phòng ban của Người lập phiếu hoặc Bộ phận yêu cầu nhập kho (Lấy từ `employees.department` của `created_by_id`).
+> * **`Bộ phận`**: Phòng ban của Người lập phiếu hoặc Bộ phận yêu cầu nhập kho (Lấy từ `users.department` của `created_by_id`).
 
 ---
 
@@ -182,10 +183,12 @@ erDiagram
 | `debit_account` | VARCHAR(20) | NULL | **Tài khoản Nợ** (VD: 152) |
 | `credit_account` | VARCHAR(20) | NULL | **Tài khoản Có** (VD: 331) |
 | `total_amount` | NUMERIC(18,2) | DEFAULT 0, CHECK >= 0 | **Tổng số tiền phiếu** |
-| `created_by_id` | UUID | FK -> `employees`, NOT NULL | **Người lập phiếu (Ký, họ tên)** (`role = 'CREATOR'`) |
-| `keeper_id` | UUID | FK -> `employees` | **Thủ kho (Ký, họ tên)** (`role = 'KEEPER'`) |
-| `accountant_id` | UUID | FK -> `employees` | **Kế toán trưởng (Ký, họ tên)** (`role = 'ACCOUNTANT'`) |
-| `created_at` | TIMESTAMPTZ | DEFAULT CURRENT_TIMESTAMP | Thời gian tạo trên hệ thống |
+| `status` | ENUM | NOT NULL, DEFAULT 'DRAFT' | **Trạng thái phiếu**: `'DRAFT'` (Bản nháp), `'PUBLIC'` (Đã phát hành), `'CANCEL'` (Đã hủy) |
+| `created_by_id` | UUID | FK -> `users`, NOT NULL | **Người lập phiếu (Ký, họ tên)** (`role = 'CREATOR'`) |
+| `keeper_id` | UUID | FK -> `users` | **Thủ kho (Ký, họ tên)** (`role = 'KEEPER'`) |
+| `accountant_id` | UUID | FK -> `users` | **Kế toán trưởng (Ký, họ tên)** (`role = 'ACCOUNTANT'`) |
+| `created_at` | TIMESTAMPTZ | DEFAULT CURRENT_TIMESTAMP | Thời gian tạo bản ghi |
+| `updated_at` | TIMESTAMPTZ | DEFAULT CURRENT_TIMESTAMP | Thời gian cập nhật bản ghi |
 
 ---
 
@@ -194,7 +197,6 @@ erDiagram
 | :--- | :--- | :--- | :--- |
 | `id` | UUID | PK | Khóa chính dòng |
 | `receipt_id` | UUID | FK -> `inventory_receipts`, NOT NULL | Khóa ngoại trỏ tới Header (ON DELETE CASCADE) |
-| `line_number` | INT | NOT NULL | **Cột A**: STT dòng (1, 2, 3...) |
 | `item_id` | UUID | FK -> `items`, NOT NULL | **Cột B & C**: Mã số & Tên quy cách vật tư |
 | `unit_id` | UUID | FK -> `units`, NOT NULL | **Cột D**: Đơn vị tính |
 | `document_quantity` | NUMERIC(12,3) | NOT NULL, CHECK >= 0 | **Cột 1**: Số lượng theo chứng từ |
@@ -234,14 +236,13 @@ CREATE TABLE suppliers (
     tax_code VARCHAR(20)
 );
 
--- 4. Bảng Nhân viên (Phân 3 vai trò rõ ràng & Gắn theo Kho)
-CREATE TABLE employees (
+-- 4. Bảng Người dùng / Nhân viên (Phân 3 vai trò rõ ràng, linh hoạt thao tác N kho)
+CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     code VARCHAR(50) NOT NULL UNIQUE,
     full_name VARCHAR(100) NOT NULL,
     department VARCHAR(100),
-    role VARCHAR(50) NOT NULL CHECK (role IN ('CREATOR', 'KEEPER', 'ACCOUNTANT')),
-    warehouse_id UUID REFERENCES warehouses(id) -- Kho phụ trách
+    role VARCHAR(50) NOT NULL CHECK (role IN ('CREATOR', 'KEEPER', 'ACCOUNTANT'))
 );
 
 -- 5. Bảng Vật tư / Hàng hóa
@@ -253,7 +254,9 @@ CREATE TABLE items (
     unit_id UUID NOT NULL REFERENCES units(id)
 );
 
--- 6. Bảng Header Phiếu nhập kho (Tối giản 2 chữ ký bắt buộc)
+-- 6. Bảng Header Phiếu nhập kho (Tối giản 3 chữ ký)
+CREATE TYPE receipt_status_enum AS ENUM ('DRAFT', 'PUBLIC', 'CANCEL');
+
 CREATE TABLE inventory_receipts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     receipt_no VARCHAR(50) NOT NULL UNIQUE,
@@ -266,24 +269,24 @@ CREATE TABLE inventory_receipts (
     debit_account VARCHAR(20),
     credit_account VARCHAR(20),
     total_amount NUMERIC(18, 2) DEFAULT 0 CHECK (total_amount >= 0),
-    created_by_id UUID NOT NULL REFERENCES employees(id), -- 1. Người lập (role = 'CREATOR')
-    keeper_id UUID REFERENCES employees(id),              -- 2. Thủ kho nhận (role = 'KEEPER')
-    accountant_id UUID REFERENCES employees(id),    -- 3. Kế toán trưởng duyệt (role = 'ACCOUNTANT')
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    status receipt_status_enum NOT NULL DEFAULT 'DRAFT',
+    created_by_id UUID NOT NULL REFERENCES users(id), -- 1. Người lập (role = 'CREATOR')
+    keeper_id UUID REFERENCES users(id),              -- 2. Thủ kho nhận (role = 'KEEPER')
+    accountant_id UUID REFERENCES users(id),          -- 3. Kế toán trưởng duyệt (role = 'ACCOUNTANT')
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 7. Bảng Detail (Chi tiết 8 cột + Hỗ trợ Nhập đa kho)
 CREATE TABLE inventory_receipt_details (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     receipt_id UUID NOT NULL REFERENCES inventory_receipts(id) ON DELETE CASCADE,
-    line_number INT NOT NULL,
     item_id UUID NOT NULL REFERENCES items(id),
     unit_id UUID NOT NULL REFERENCES units(id),
     warehouse_id UUID REFERENCES warehouses(id), -- Kho thực nhập từng dòng
     document_quantity NUMERIC(12, 3) NOT NULL CHECK (document_quantity >= 0),
     actual_quantity NUMERIC(12, 3) NOT NULL CHECK (actual_quantity >= 0),
     unit_price NUMERIC(18, 2) NOT NULL CHECK (unit_price >= 0),
-    amount NUMERIC(18, 2) GENERATED ALWAYS AS (actual_quantity * unit_price) STORED,
-    CONSTRAINT uk_receipt_line_number UNIQUE (receipt_id, line_number)
+    amount NUMERIC(18, 2) GENERATED ALWAYS AS (actual_quantity * unit_price) STORED
 );
 ```

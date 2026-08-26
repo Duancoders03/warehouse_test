@@ -1,0 +1,99 @@
+/* Modern WMS Custom Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Glassmorphism Card Style */
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Desktop Sidebar Collapse Transitions */
+#desktopSidebar {
+  transition: width 0.3s ease-in-out;
+}
+
+#desktopSidebar.collapsed {
+  width: 5rem !important; /* 80px width when collapsed */
+}
+
+#desktopSidebar.collapsed .sidebar-text {
+  display: none !important;
+}
+
+#desktopSidebar.collapsed .sidebar-header {
+  justify-content: center !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+#desktopSidebar.collapsed .sidebar-nav-item {
+  justify-content: center !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+#desktopSidebar.collapsed .sidebar-nav-item i {
+  margin-right: 0 !important;
+  font-size: 1.25rem !important;
+}
+
+#desktopSidebar.collapsed .sidebar-info-box {
+  display: none !important;
+}
+
+/* Custom Table Styling */
+.table-vat-tu th {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+/* Print Rules for Mẫu 01-VT Official Document */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-size: 12pt;
+    font-family: 'Inter', Arial, sans-serif !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .print-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  table, th, td {
+    border: 1px solid #000000 !important;
+    color: #000000 !important;
+  }
+
+  th, td {
+    padding: 6px 8px !important;
+  }
+}

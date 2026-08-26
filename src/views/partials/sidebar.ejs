@@ -1,0 +1,142 @@
+<!-- Desktop Sidebar -->
+<aside id="desktopSidebar" class="w-64 bg-[#0f172a] text-slate-300 flex-shrink-0 hidden md:block border-r border-slate-800/80 no-print shadow-sm">
+  <div class="p-3.5 space-y-6">
+    
+    <div>
+      <div class="sidebar-header px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 opacity-90">
+        <span class="sidebar-text">Nghiệp Vụ Kho</span>
+      </div>
+      <nav class="space-y-1">
+        <a href="/" title="Tổng Quan (Dashboard)" class="sidebar-nav-item flex items-center px-3 py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'dashboard' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+          <i class="fa-solid fa-chart-pie w-5 text-center mr-3 <%= typeof currentNav !== 'undefined' && currentNav === 'dashboard' ? 'text-white' : 'text-slate-400' %>"></i>
+          <span class="sidebar-text">Tổng Quan (Dashboard)</span>
+        </a>
+
+        <a href="/receipts" title="Danh Sách Phiếu Nhập" class="sidebar-nav-item flex items-center px-3 py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'receipts' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+          <i class="fa-solid fa-file-invoice w-5 text-center mr-3 <%= typeof currentNav !== 'undefined' && currentNav === 'receipts' ? 'text-white' : 'text-slate-400' %>"></i>
+          <span class="sidebar-text">Danh Sách Phiếu Nhập</span>
+        </a>
+
+        <a href="/receipts/create" title="Lập Phiếu Nhập Kho" class="sidebar-nav-item flex items-center px-3 py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'receipt-create' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+          <i class="fa-solid fa-file-circle-plus w-5 text-center mr-3 <%= typeof currentNav !== 'undefined' && currentNav === 'receipt-create' ? 'text-white' : 'text-slate-400' %>"></i>
+          <span class="sidebar-text">Lập Phiếu Nhập Kho</span>
+        </a>
+      </nav>
+    </div>
+
+    <div>
+      <div class="sidebar-header px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 opacity-90">
+        <span class="sidebar-text">Danh Mục Master Data</span>
+      </div>
+      <nav class="space-y-1">
+        <a href="/admin/items" title="Vật Tư / Hàng Hóa" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-items' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+          <i class="fa-solid fa-boxes-packing w-5 text-center mr-3 text-slate-400"></i>
+          <span class="sidebar-text">Vật Tư / Hàng Hóa</span>
+        </a>
+
+        <a href="/admin/units" title="Đơn Vị Tính" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-units' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+          <i class="fa-solid fa-scale-balanced w-5 text-center mr-3 text-slate-400"></i>
+          <span class="sidebar-text">Đơn Vị Tính</span>
+        </a>
+
+        <a href="/admin/warehouses" title="Kho Hàng" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-warehouses' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+          <i class="fa-solid fa-warehouse w-5 text-center mr-3 text-slate-400"></i>
+          <span class="sidebar-text">Kho Hàng</span>
+        </a>
+
+        <a href="/admin/suppliers" title="Nhà Cung Cấp" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-suppliers' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+          <i class="fa-solid fa-truck-field w-5 text-center mr-3 text-slate-400"></i>
+          <span class="sidebar-text">Nhà Cung Cấp</span>
+        </a>
+
+        <a href="/admin/users" title="Người Dùng & Vai Trò" class="sidebar-nav-item flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-users' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+          <i class="fa-solid fa-users-gear w-5 text-center mr-3 text-slate-400"></i>
+          <span class="sidebar-text">Người Dùng & Vai Trò</span>
+        </a>
+      </nav>
+    </div>
+
+  </div>
+</aside>
+
+<!-- Mobile Slide-over Drawer Sidebar (< md) -->
+<div id="mobileSidebarDrawer" class="fixed inset-0 z-50 md:hidden hidden no-print">
+  <!-- Backdrop Overlay -->
+  <div id="mobileSidebarBackdrop" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm transition-opacity duration-300 opacity-0"></div>
+
+  <!-- Drawer Panel -->
+  <aside id="mobileSidebarPanel" class="fixed inset-y-0 left-0 w-72 bg-[#0f172a] text-slate-300 shadow-2xl flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out border-r border-slate-800">
+    
+    <!-- Drawer Header -->
+    <div class="p-4 border-b border-slate-800/80 flex items-center justify-between">
+      <a href="/" class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-bold text-base shadow-sm">
+          <i class="fa-solid fa-boxes-stacked"></i>
+        </div>
+        <span class="text-lg font-extrabold tracking-tight text-white">VIMES <span class="text-sky-400 font-semibold">WMS</span></span>
+      </a>
+      <button id="closeMobileSidebarBtn" type="button" aria-label="Đóng Menu" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-colors">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Drawer Body Navigation -->
+    <div class="p-4 space-y-6 flex-1 overflow-y-auto">
+      <div>
+        <div class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 opacity-90">
+          Nghiệp Vụ Kho
+        </div>
+        <nav class="space-y-1">
+          <a href="/" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'dashboard' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+            <i class="fa-solid fa-chart-pie w-5 text-center mr-3 <%= typeof currentNav !== 'undefined' && currentNav === 'dashboard' ? 'text-white' : 'text-slate-400' %>"></i>
+            Tổng Quan (Dashboard)
+          </a>
+
+          <a href="/receipts" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'receipts' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+            <i class="fa-solid fa-file-invoice w-5 text-center mr-3 <%= typeof currentNav !== 'undefined' && currentNav === 'receipts' ? 'text-white' : 'text-slate-400' %>"></i>
+            Danh Sách Phiếu Nhập
+          </a>
+
+          <a href="/receipts/create" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'receipt-create' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+            <i class="fa-solid fa-file-circle-plus w-5 text-center mr-3 <%= typeof currentNav !== 'undefined' && currentNav === 'receipt-create' ? 'text-white' : 'text-slate-400' %>"></i>
+            Lập Phiếu Nhập Kho
+          </a>
+        </nav>
+      </div>
+
+      <div>
+        <div class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 opacity-90">
+          Danh Mục Master Data
+        </div>
+        <nav class="space-y-1">
+          <a href="/admin/items" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-items' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+            <i class="fa-solid fa-boxes-packing w-5 text-center mr-3 text-slate-400"></i>
+            Vật Tư / Hàng Hóa
+          </a>
+
+          <a href="/admin/units" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-units' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+            <i class="fa-solid fa-scale-balanced w-5 text-center mr-3 text-slate-400"></i>
+            Đơn Vị Tính
+          </a>
+
+          <a href="/admin/warehouses" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-warehouses' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+            <i class="fa-solid fa-warehouse w-5 text-center mr-3 text-slate-400"></i>
+            Kho Hàng
+          </a>
+
+          <a href="/admin/suppliers" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-suppliers' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+            <i class="fa-solid fa-truck-field w-5 text-center mr-3 text-slate-400"></i>
+            Nhà Cung Cấp
+          </a>
+
+          <a href="/admin/users" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all <%= typeof currentNav !== 'undefined' && currentNav === 'admin-users' ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold shadow-md shadow-sky-500/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60' %>">
+            <i class="fa-solid fa-users-gear w-5 text-center mr-3 text-slate-400"></i>
+            Người Dùng & Vai Trò
+          </a>
+        </nav>
+      </div>
+
+    </div>
+
+  </aside>
+</div>

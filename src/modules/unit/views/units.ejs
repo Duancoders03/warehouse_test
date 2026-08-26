@@ -1,0 +1,236 @@
+<div class="space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-4">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900">Danh Mục Đơn Vị Tính</h1>
+      <p class="text-sm text-slate-500 mt-1">Quản lý chuẩn hóa các đơn vị đo lường vật tư & hàng hóa (Cột D Mẫu 01-VT)</p>
+    </div>
+    <div>
+      <button type="button" onclick="openCreateModal()" class="inline-flex items-center justify-center px-4 py-2.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-md shadow-sky-500/20 transition-all duration-200 cursor-pointer">
+        <i class="fa-solid fa-plus mr-2"></i> Thêm Đơn Vị Tính
+      </button>
+    </div>
+  </div>
+
+  <!-- Notification Banners -->
+  <% if (typeof successMsg !== 'undefined' && successMsg) { %>
+    <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-medium flex items-center justify-between shadow-sm">
+      <div class="flex items-center">
+        <i class="fa-solid fa-circle-check text-emerald-500 mr-3 text-lg"></i>
+        <span><%= successMsg %></span>
+      </div>
+      <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 p-1">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  <% } %>
+
+  <% if (typeof errorMsg !== 'undefined' && errorMsg) { %>
+    <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-medium flex items-center justify-between shadow-sm">
+      <div class="flex items-center">
+        <i class="fa-solid fa-triangle-exclamation text-rose-500 mr-3 text-lg"></i>
+        <span><%= errorMsg %></span>
+      </div>
+      <button onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700 p-1">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  <% } %>
+
+  <!-- Filter & Search Bar -->
+  <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+    <form action="/admin/units" method="GET" class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+      <div class="relative flex-1">
+        <input type="text" name="keyword" id="unitSearchKeyword" value="<%= typeof keyword !== 'undefined' ? keyword : '' %>" placeholder="Nhập mã ĐVT hoặc tên đơn vị..." class="w-full text-sm pl-9 pr-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+      </div>
+      <button type="submit" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs rounded-xl transition-all cursor-pointer">
+        Tìm Kiếm
+      </button>
+      <% if (typeof keyword !== 'undefined' && keyword) { %>
+        <a href="/admin/units" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium text-xs rounded-xl transition-all text-center">
+          Xóa Lọc
+        </a>
+      <% } %>
+    </form>
+  </div>
+
+  <!-- Units Table -->
+  <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse text-sm" id="unitsTable">
+        <thead>
+          <tr class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold border-b border-slate-200">
+            <th class="py-3.5 px-6 w-20">STT</th>
+            <th class="py-3.5 px-6">Mã ĐVT (Code)</th>
+            <th class="py-3.5 px-6">Tên Đơn Vị Tính</th>
+            <th class="py-3.5 px-6 text-right w-36">Thao Tác</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% if (units && units.length > 0) { %>
+            <% units.forEach((u, idx) => { %>
+              <tr class="unit-row hover:bg-slate-50/80 transition-colors"
+                  data-search="<%= (u.code + ' ' + u.name).toLowerCase() %>">
+                <td class="py-4 px-6 text-slate-500 font-mono text-xs"><%= idx + 1 %></td>
+                <td class="py-4 px-6 font-mono font-bold text-sky-700">
+                  <span class="px-2.5 py-1 rounded-lg bg-sky-50 text-sky-700 border border-sky-200 font-bold text-xs">
+                    <%= u.code %>
+                  </span>
+                </td>
+                <td class="py-4 px-6 font-bold text-slate-900"><%= u.name %></td>
+                <td class="py-4 px-6 text-right space-x-2">
+                  <button type="button" 
+                          onclick="openEditModal('<%= u.id %>', '<%= u.code %>', '<%= u.name %>')"
+                          title="Chỉnh Sửa" 
+                          class="p-2 rounded-lg text-slate-500 hover:text-sky-600 hover:bg-sky-50 transition-colors cursor-pointer">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                  <form action="/admin/units/<%= u.id %>/delete" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn vị tính `<%= u.name %>`?');">
+                    <button type="submit" 
+                            title="Xóa Đơn Vị Tính" 
+                            class="p-2 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="4" class="py-12 text-center text-slate-400">
+                Chưa có dữ liệu đơn vị tính phù hợp.
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal Thêm Đơn Vị Tính -->
+<div id="createModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm hidden">
+  <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md mx-4 overflow-hidden transform transition-all">
+    <div class="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50/50">
+      <h3 class="text-base font-bold text-slate-900 flex items-center">
+        <i class="fa-solid fa-plus-circle text-sky-600 mr-2.5"></i> Thêm Đơn Vị Tính Mới
+      </h3>
+      <button onclick="closeCreateModal()" class="text-slate-400 hover:text-slate-600 p-1">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+    
+    <form action="/admin/units" method="POST" class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+          Mã ĐVT <span class="text-rose-500">*</span>
+        </label>
+        <input type="text" name="code" required placeholder="VD: KG, CAI, THUNG..." 
+               class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none uppercase font-mono">
+        <p class="text-[11px] text-slate-400 mt-1">Từ 3-15 ký tự chữ hoặc số, tự động viết hoa.</p>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+          Tên Đơn Vị Tính <span class="text-rose-500">*</span>
+        </label>
+        <input type="text" name="name" required placeholder="VD: Kilôgam, Cái, Thùng..." 
+               class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+      </div>
+
+      <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+        <button type="button" onclick="closeCreateModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-all">
+          Hủy Bỏ
+        </button>
+        <button type="submit" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all">
+          Lưu Đơn Vị Tính
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Sửa Đơn Vị Tính -->
+<div id="editModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm hidden">
+  <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md mx-4 overflow-hidden transform transition-all">
+    <div class="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50/50">
+      <h3 class="text-base font-bold text-slate-900 flex items-center">
+        <i class="fa-solid fa-pen-to-square text-indigo-600 mr-2.5"></i> Cập Nhật Đơn Vị Tính
+      </h3>
+      <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 p-1">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+    
+    <form id="editForm" method="POST" class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+          Mã ĐVT <span class="text-rose-500">*</span>
+        </label>
+        <input type="text" id="editCode" name="code" required placeholder="VD: KG, CAI, THUNG..." 
+               class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none uppercase font-mono">
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+          Tên Đơn Vị Tính <span class="text-rose-500">*</span>
+        </label>
+        <input type="text" id="editName" name="name" required placeholder="VD: Kilôgam, Cái, Thùng..." 
+               class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+      </div>
+
+      <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+        <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-all">
+          Hủy Bỏ
+        </button>
+        <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all">
+          Cập Nhật
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openCreateModal() {
+    document.getElementById('createModal').classList.remove('hidden');
+  }
+
+  function closeCreateModal() {
+    document.getElementById('createModal').classList.add('hidden');
+  }
+
+  function openEditModal(id, code, name) {
+    const editForm = document.getElementById('editForm');
+    editForm.action = `/admin/units/${id}/update`;
+    document.getElementById('editCode').value = code;
+    document.getElementById('editName').value = name;
+    document.getElementById('editModal').classList.remove('hidden');
+  }
+
+  function closeEditModal() {
+    document.getElementById('editModal').classList.add('hidden');
+  }
+
+  // Client-side quick filter
+  document.addEventListener('DOMContentLoaded', () => {
+    const keywordInput = document.getElementById('unitSearchKeyword');
+    const rows = document.querySelectorAll('.unit-row');
+
+    keywordInput?.addEventListener('input', () => {
+      const keyword = keywordInput.value.toLowerCase().trim();
+
+      rows.forEach(row => {
+        const searchStr = row.dataset.search || '';
+        if (!keyword || searchStr.includes(keyword)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
