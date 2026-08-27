@@ -4,13 +4,19 @@
 
 ---
 
-## 🌟 Điểm Nổi Bật Về Kiến Trúc & Nghiệp Vụ
+## 📘 Tổng Quan Dự Án (Project Overview)
 
-- **Chuẩn Hóa Chứng Từ Mẫu 01-VT**: Hiển thị và in phiếu nhập kho chuẩn 8 cột (STT, Mã & Tên vật tư, Đơn vị tính, Số lượng chứng từ, Số lượng thực nhập, Đơn giá, Thành tiền, Kho thực nhập) kết hợp bộ 3 chữ ký bắt buộc (Người lập, Thủ kho, Kế toán trưởng).
-- **Cấu Trúc Route Namespace `/admin/*`**: Đã nâng cấp toàn bộ hệ thống quản lý dữ liệu danh mục nền tảng (Đơn vị tính, Kho hàng, Nhà cung cấp, Vật tư, Người dùng) về namespace quản trị `/admin/*` thống nhất.
-- **Phân Quyền Vai Trò Đa Kho (Multi-Warehouse Roles)**: Thiết kế CSDL tối giản, giải phóng ràng buộc cứng `warehouse_id` ở bảng người dùng. Cho phép Người lập (`creator`), Thủ kho (`keeper`), và Kế toán trưởng (`accountant`) linh hoạt ký duyệt và thao tác trên **N nhà kho** khác nhau.
-- **Master Data PostgreSQL Phân Trang (Server-side Pagination)**: Tất cả các danh mục Quản lý Đơn vị tính (`units`), Kho hàng (`warehouses`), Nhà cung cấp (`suppliers`), Vật tư/Hàng hóa (`items`), và Người dùng (`users`) được chuyển đổi 100% sang PostgreSQL với tính năng lọc từ khóa & phân trang phía Server.
-- **Giao Diện SSR Hiện Đại & Trực Quan**: Render trực tiếp phía Server với EJS, TailwindCSS, hiệu ứng Glassmorphic, micro-animations và Responsive tối ưu cho cả desktop lẫn thiết bị di động.
+**Warehouse Management System (WMS)** là giải pháp phần mềm web doanh nghiệp được thiết kế chuyên sâu nhằm quản lý vật tư, hàng hóa và tự động hóa quy trình nghiệp vụ nhập kho theo chuẩn mực kế toán Việt Nam (**Mẫu 01-VT**).
+
+Dự án được phát triển theo kiến trúc **Layered Architecture (Service - Controller - Model)** chuẩn mực trên nền tảng **Node.js, TypeScript, Express, Sequelize ORM và PostgreSQL**, giúp doanh nghiệp vận hành kho hàng chính xác, minh bạch và tối ưu hiệu suất.
+
+### 🎯 Mục Tiêu Nghiệp Vụ & Đặc Điểm Cốt Lõi:
+
+- **Chuẩn Hóa Chứng Từ Mẫu 01-VT**: Tự động hóa quy trình lập, quản lý và in ấn phiếu nhập kho chuẩn 8 cột (STT, Mã & Tên vật tư, Đơn vị tính, Số lượng theo chứng từ, Số lượng thực nhập, Đơn giá, Thành tiền) kết hợp bộ 3 chữ ký trách nhiệm bắt buộc (*Người lập phiếu*, *Thủ kho*, *Kế toán trưởng*).
+- **Quản Lý Danh Mục Master Data Tối Ưu (`/admin/*`)**: Chuẩn hóa toàn bộ hệ thống danh mục quản trị (Đơn vị tính, Kho hàng, Nhà cung cấp, Vật tư/Hàng hóa, Người dùng) về namespace `/admin/*` với tính năng lọc từ khóa & phân trang Server-side linh hoạt.
+- **Mô Hình Phân Quyền Nhân Sự Đa Kho (Multi-Warehouse Roles)**: Phân quyền linh hoạt 3 vai trò nhân sự chuyên biệt (*Người lập phiếu*, *Thủ kho*, *Kế toán trưởng*), hỗ trợ thao tác, ký duyệt chứng từ và quản lý dữ liệu linh hoạt trên nhiều nhà kho khác nhau.
+- **Bảo Đảm Chất Lượng Bằng Automation Testing (Jest & QA Excel)**: Hệ thống được tích hợp bộ **38/38 Automation Unit Tests** phủ 100% logic nghiệp vụ (Managed DB Transaction Rollback, tự tính tổng tiền, sinh mã phiếu `NK000001`, chặn xóa phiếu `PUBLIC`) và tính năng tự động xuất báo cáo Kịch bản kiểm thử Excel chuyên nghiệp.
+- **Trải Nghiệm SSR Trực Quan & Hiện Đại**: Giao diện Server-Side Rendering (SSR) với EJS, TailwindCSS, hiệu ứng Glassmorphic, micro-animations và hiển thị tối ưu trên cả Desktop lẫn di động.
 
 ---
 
@@ -27,6 +33,10 @@
 ### 3. Chi Tiết Phiếu Nhập Kho & In Ấn Chứng Từ (Chuẩn Mẫu 01-VT)
 
 ![Giao diện Chi Tiết Phiếu Nhập Kho Mẫu 01-VT](src/public/images/receipt_detail.png)
+
+### 4. Bảng Kịch Bản Kiểm Thử Doanh Nghiệp (File Excel `tests/project_test_cases.xlsx`)
+
+![Kịch Bản Kiểm Thử Hệ Thống Excel](src/public/images/test_cases_excel.png)
 
 ---
 
@@ -222,9 +232,46 @@ npm run dev
 | `npm run build`        | Biên dịch TypeScript sang mã JavaScript nguyên bản trong thư mục`dist/` |
 | `npm run start`        | Chạy sản phẩm đã biên dịch trong thư mục`dist/server.js`              |
 | `npm run migrate`      | Thực thi tất cả các file Migration khởi tạo bảng PostgreSQL               |
-| `npm run migrate:undo` | Rollback Migration gần nhất                                me                  |
+| `npm run migrate:undo` | Rollback Migration gần nhất                                                    |
 | `npm run seed`         | Thực thi toàn bộ các file Seeder nạp dữ liệu mẫu                         |
 | `npm run seed:undo`    | Rollback Seeder gần nhất                                                       |
+| `npm test`             | Chạy toàn bộ 38 bài Unit Test kiểm thử logic hệ thống bằng Jest CLI           |
+| `npm run test:coverage`| Chạy Unit Test & Đo lường độ bao phủ code (Code Coverage Report HTML & Console)|
+| `npm run test:report`  | Chạy Unit Test & Tự động cập nhật trạng thái mới nhất vào `tests/project_test_cases.xlsx` |
+
+---
+
+## 🧪 Quy Trình Kiểm Thử Tự Động & Kịch Bản QA (Automated Testing & QA Plan)
+
+Hệ thống được trang bị bộ kiểm thử tự động **Full Coverage (38/38 Test Cases Passed)** phủ 100% các chức năng cốt lõi trên cả 6 Module chính:
+
+### 📊 Bảng Thống Kê Kịch Bản Kiểm Thử:
+
+| Module | Số Kịch Bản | Mã Test Case | Nội Dung Kiểm Thử Cốt Lõi |
+| :--- | :---: | :--- | :--- |
+| **1. Unit (Đơn vị tính)** | **10** | `TC_UNT_001` ➔ `TC_UNT_010` | Lọc từ khóa, Lấy chi tiết, ID rác, Tạo mới (In hoa code), Validate rỗng/trùng, Update & Delete ràng buộc khóa ngoại |
+| **2. Warehouse (Kho hàng)** | **6** | `TC_WHS_001` ➔ `TC_WHS_006` | Xem danh sách, Lọc địa chỉ, Tạo kho (In hoa mã code), Lỗi trùng mã kho, Update & Delete kho |
+| **3. Supplier (Nhà cung cấp)** | **4** | `TC_SUP_001` ➔ `TC_SUP_004` | Tạo mới (Mã số thuế, địa chỉ), Phân trang & Tìm kiếm, Danh sách Dropdown, Update & Delete full flow |
+| **4. Item (Vật tư / Hàng hóa)** | **4** | `TC_ITM_001` ➔ `TC_ITM_004` | Tạo vật tư liên kết Đơn vị tính, Chặn trùng mã vật tư, Phân trang quy cách, Update & Delete |
+| **5. User (Người dùng)** | **3** | `TC_USR_001` ➔ `TC_USR_003` | Tạo nhân viên phân vai trò (`creator`, `keeper`, `accountant`), Lọc theo Role Filter, Update & Delete User |
+| **6. Inventory Receipt (Phiếu nhập)** | **11** | `TC_RCT_001` ➔ `TC_RCT_011` | Tự sinh mã `NK000001`, Tự tính tổng tiền, Status `DRAFT`, Lỗi chi tiết rỗng, Chặn trùng vật tư, **Sequelize Managed Transaction Rollback**, Phân trang, Xem chi tiết Mẫu 01-VT, Edit phiếu, Phát hành `PUBLIC`, Chặn xóa phiếu `PUBLIC`, Xóa phiếu `DRAFT` |
+
+### 🛠 Hướng Dẫn Chạy Kiểm Thử:
+
+1. **Chạy tất cả bài Unit Test:**
+   ```bash
+   npm test
+   ```
+2. **Xem báo cáo độ bao phủ Code Coverage (HTML):**
+   ```bash
+   npm run test:coverage
+   ```
+   *Báo cáo HTML sẽ được khởi tạo tại `coverage/lcov-report/index.html`.*
+
+3. **Chạy Test & Tự động đồng bộ báo cáo Excel (`tests/project_test_cases.xlsx`):**
+   ```bash
+   npm run test:report
+   ```
 
 ---
 

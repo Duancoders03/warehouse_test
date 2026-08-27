@@ -13,7 +13,10 @@
     "migrate": "tsx node_modules/sequelize-cli/lib/sequelize db:migrate",
     "migrate:undo": "tsx node_modules/sequelize-cli/lib/sequelize db:migrate:undo",
     "seed": "tsx node_modules/sequelize-cli/lib/sequelize db:seed:all",
-    "seed:undo": "tsx node_modules/sequelize-cli/lib/sequelize db:seed:undo:all"
+    "seed:undo": "tsx node_modules/sequelize-cli/lib/sequelize db:seed:undo:all",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --coverage --runInBand",
+    "test:report": "jest --runInBand && node tests/scripts/generate_excel.js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +34,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "ejs": "^6.0.1",
+    "exceljs": "^4.4.0",
     "express": "^5.2.1",
     "pg": "^8.23.0",
     "pg-hstore": "^2.3.4",
@@ -40,9 +44,14 @@
     "@types/cors": "^2.8.19",
     "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
     "@types/node": "^26.2.0",
+    "@types/supertest": "^7.2.1",
+    "jest": "^30.4.2",
     "sequelize-cli": "^6.6.5",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.12",
     "tsx": "^4.23.12",
-    "typescript": "^7.0.2"
+    "typescript": "^5.9.3"
   }
 }
