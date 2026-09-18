@@ -135,7 +135,6 @@
               <th class="border border-slate-300 p-2 w-28">SL Thực Nhập<br><span class="text-[10px] text-slate-400 font-normal">(Cột 2)</span></th>
               <th class="border border-slate-300 p-2 w-32">Đơn Giá (VNĐ)<br><span class="text-[10px] text-slate-400 font-normal">(Cột 3)</span></th>
               <th class="border border-slate-300 p-2 w-36">Thành Tiền (VNĐ)<br><span class="text-[10px] text-slate-400 font-normal">(Cột 4)</span></th>
-              <th class="border border-slate-300 p-2 min-w-[150px]">Kho Thực Nhập</th>
               <th class="border border-slate-300 p-2 text-center w-12">Xóa</th>
             </tr>
           </thead>
@@ -179,15 +178,6 @@
 
                   <td class="border border-slate-200 p-2">
                     <input type="text" readonly value="<%= det.amount %>" class="amount-input w-full text-xs p-1.5 bg-slate-50 border border-slate-200 rounded text-right font-extrabold text-emerald-700 outline-none">
-                  </td>
-
-                  <td class="border border-slate-200 p-2">
-                    <select class="row-warehouse-select w-full text-xs p-1.5 border border-slate-300 rounded focus:ring-1 focus:ring-sky-500 outline-none">
-                      <option value="">Chọn kho nhập</option>
-                      <% warehouses.forEach(w => { %>
-                        <option value="<%= w.id %>" <%= det.warehouse_id === w.id ? 'selected' : '' %>><%= w.name %></option>
-                      <% }) %>
-                    </select>
                   </td>
 
                   <td class="border border-slate-200 p-2 text-center">
@@ -235,15 +225,6 @@
 
                 <td class="border border-slate-200 p-2">
                   <input type="text" readonly value="0" class="amount-input w-full text-xs p-1.5 bg-slate-50 border border-slate-200 rounded text-right font-extrabold text-emerald-700 outline-none">
-                </td>
-
-                <td class="border border-slate-200 p-2">
-                  <select class="row-warehouse-select w-full text-xs p-1.5 border border-slate-300 rounded focus:ring-1 focus:ring-sky-500 outline-none">
-                    <option value="">Chọn kho nhập</option>
-                    <% warehouses.forEach(w => { %>
-                      <option value="<%= w.id %>"><%= w.name %></option>
-                    <% }) %>
-                  </select>
                 </td>
 
                 <td class="border border-slate-200 p-2 text-center">

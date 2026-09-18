@@ -13,8 +13,6 @@ export interface InventoryReceiptDetailDto {
   specifications?: string;
   unit_id: string;
   unit_name?: string;
-  warehouse_id?: string;
-  warehouse_name?: string;
   document_quantity: number;
   actual_quantity: number;
   unit_price: number;
@@ -63,7 +61,6 @@ export interface CreateReceiptDto {
   details: {
     item_id: string;
     unit_id: string;
-    warehouse_id?: string;
     document_quantity: number;
     actual_quantity: number;
     unit_price: number;

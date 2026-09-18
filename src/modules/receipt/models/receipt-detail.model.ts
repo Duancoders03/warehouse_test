@@ -6,7 +6,6 @@ export interface InventoryReceiptDetailAttributes {
   receipt_id: string;
   item_id: string;
   unit_id: string;
-  warehouse_id?: string;
   document_quantity: number;
   actual_quantity: number;
   unit_price: number;
@@ -14,7 +13,7 @@ export interface InventoryReceiptDetailAttributes {
 }
 
 export interface InventoryReceiptDetailCreationAttributes
-  extends Optional<InventoryReceiptDetailAttributes, 'id' | 'warehouse_id' | 'amount'> {}
+  extends Optional<InventoryReceiptDetailAttributes, 'id' | 'amount'> {}
 
 export class InventoryReceiptDetail
   extends Model<InventoryReceiptDetailAttributes, InventoryReceiptDetailCreationAttributes>
@@ -24,7 +23,6 @@ export class InventoryReceiptDetail
   declare receipt_id: string;
   declare item_id: string;
   declare unit_id: string;
-  declare warehouse_id: string;
   declare document_quantity: number;
   declare actual_quantity: number;
   declare unit_price: number;
@@ -64,15 +62,6 @@ InventoryReceiptDetail.init(
           msg: 'Đơn vị tính không được để trống.',
         },
       },
-    },
-    warehouse_id: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'Kho không được để trống.',
-        },
-      } ,
     },
     document_quantity: {
       type: DataTypes.DECIMAL(12, 3),

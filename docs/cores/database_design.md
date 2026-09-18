@@ -15,7 +15,7 @@ Hệ thống được thiết kế tối giản, loại bỏ mọi trường d�
 
 2. **2 Bảng Giao dịch Phiếu Nhập**:
    - `inventory_receipts` (Header): Thông tin chung phiếu nhập (Số phiếu, Ngày nhập, Chứng từ gốc, Nợ/Có, Người lập, Thủ kho, Kế toán trưởng).
-   - `inventory_receipt_details` (Detail): Đúng Mẫu 01-VT (Mã & Tên vật tư, Đơn vị tính, Số lượng chứng từ, Số lượng thực nhập, Đơn giá, Thành tiền, Kho thực nhập).
+   - `inventory_receipt_details` (Detail): Đúng Mẫu 01-VT (Mã & Tên vật tư, Đơn vị tính, Số lượng chứng từ, Số lượng thực nhập, Đơn giá, Thành tiền) — không có trường kho riêng ở từng dòng.
 
 ---
 
@@ -30,7 +30,7 @@ erDiagram
     users ||--o{ inventory_receipts : "lập_phiếu (created_by_id)"
     users ||--o{ inventory_receipts : "thủ_kho (keeper_id)"
     users ||--o{ inventory_receipts : "kế_toán_trưởng (accountant_id)"
-    
+
     inventory_receipts ||--|{ inventory_receipt_details : "chứa"
     items ||--o{ inventory_receipt_details : "chi_tiết"
 
@@ -94,7 +94,6 @@ erDiagram
         uuid receipt_id FK
         uuid item_id FK
         uuid unit_id FK
-        uuid warehouse_id FK
         decimal document_quantity
         decimal actual_quantity
         decimal unit_price
@@ -107,43 +106,47 @@ erDiagram
 ## 3. BẢNG THÔNG SỐ CHI TIẾT CÁC TRƯỜNG DỮ LIỆU (DATA DICTIONARY)
 
 ### 3.1. Bảng `units` (Đơn vị tính)
-| Tên Trường | Kiểu Dữ Liệu | Ràng Buộc | Mô Tả |
-| :--- | :--- | :--- | :--- |
-| `id` | UUID | PK, DEFAULT uuid_generate_v4() | Mã định danh duy nhất |
-| `code` | VARCHAR(20) | UNIQUE, NOT NULL | Mã đơn vị tính (VD: KG, CAI, MET) |
-| `name` | VARCHAR(50) | NOT NULL | Tên đơn vị tính (VD: Kilôgam, Cái, Mét) |
+
+| Tên Trường | Kiểu Dữ Liệu | Ràng Buộc                      | Mô Tả                                   |
+| :--------- | :----------- | :----------------------------- | :-------------------------------------- |
+| `id`       | UUID         | PK, DEFAULT uuid_generate_v4() | Mã định danh duy nhất                   |
+| `code`     | VARCHAR(20)  | UNIQUE, NOT NULL               | Mã đơn vị tính (VD: KG, CAI, MET)       |
+| `name`     | VARCHAR(50)  | NOT NULL                       | Tên đơn vị tính (VD: Kilôgam, Cái, Mét) |
 
 ---
 
 ### 3.2. Bảng `suppliers` (Nhà cung cấp)
-| Tên Trường | Kiểu Dữ Liệu | Ràng Buộc | Mô Tả |
-| :--- | :--- | :--- | :--- |
-| `id` | UUID | PK, DEFAULT uuid_generate_v4() | Mã định danh duy nhất |
-| `code` | VARCHAR(50) | UNIQUE, NOT NULL | Mã nhà cung cấp |
-| `name` | VARCHAR(255) | NOT NULL | Tên nhà cung cấp |
-| `address` | VARCHAR(255) | NULL | Địa chỉ nhà cung cấp |
-| `tax_code` | VARCHAR(20) | NULL | Mã số thuế |
+
+| Tên Trường | Kiểu Dữ Liệu | Ràng Buộc                      | Mô Tả                 |
+| :--------- | :----------- | :----------------------------- | :-------------------- |
+| `id`       | UUID         | PK, DEFAULT uuid_generate_v4() | Mã định danh duy nhất |
+| `code`     | VARCHAR(50)  | UNIQUE, NOT NULL               | Mã nhà cung cấp       |
+| `name`     | VARCHAR(255) | NOT NULL                       | Tên nhà cung cấp      |
+| `address`  | VARCHAR(255) | NULL                           | Địa chỉ nhà cung cấp  |
+| `tax_code` | VARCHAR(20)  | NULL                           | Mã số thuế            |
 
 ---
 
 ### 3.3. Bảng `warehouses` (Kho hàng)
-| Tên Trường | Kiểu Dữ Liệu | Ràng Buộc | Mô Tả |
-| :--- | :--- | :--- | :--- |
-| `id` | UUID | PK, DEFAULT uuid_generate_v4() | Mã định danh duy nhất |
-| `code` | VARCHAR(50) | UNIQUE, NOT NULL | Mã kho |
-| `name` | VARCHAR(255) | NOT NULL | **Tên kho** (Hiển thị ô "Nhập tại kho" Mẫu 01-VT) |
-| `address` | VARCHAR(255) | NULL | **Địa điểm kho** (Hiển thị ô "Địa điểm" Mẫu 01-VT) |
+
+| Tên Trường | Kiểu Dữ Liệu | Ràng Buộc                      | Mô Tả                                              |
+| :--------- | :----------- | :----------------------------- | :------------------------------------------------- |
+| `id`       | UUID         | PK, DEFAULT uuid_generate_v4() | Mã định danh duy nhất                              |
+| `code`     | VARCHAR(50)  | UNIQUE, NOT NULL               | Mã kho                                             |
+| `name`     | VARCHAR(255) | NOT NULL                       | **Tên kho** (Hiển thị ô "Nhập tại kho" Mẫu 01-VT)  |
+| `address`  | VARCHAR(255) | NULL                           | **Địa điểm kho** (Hiển thị ô "Địa điểm" Mẫu 01-VT) |
 
 ---
 
 ### 3.4. Bảng `users` (Người dùng / Nhân viên)
-| Tên Trường | Kiểu Dữ Liệu | Ràng Buộc | Mô Tả |
-| :--- | :--- | :--- | :--- |
-| `id` | UUID | PK, DEFAULT uuid_generate_v4() | Mã định danh duy nhất |
-| `code` | VARCHAR(50) | UNIQUE, NOT NULL | Mã người dùng / nhân viên |
-| `full_name` | VARCHAR(100) | NOT NULL | Họ và tên người dùng |
-| `department` | VARCHAR(100) | NULL | Phòng ban |
-| `role` | VARCHAR(50) | NOT NULL, CHECK | **3 Vai trò**: `'CREATOR'` (Người lập), `'KEEPER'` (Thủ kho), `'ACCOUNTANT'` (Kế toán trưởng) |
+
+| Tên Trường   | Kiểu Dữ Liệu | Ràng Buộc                      | Mô Tả                                                                                         |
+| :----------- | :----------- | :----------------------------- | :-------------------------------------------------------------------------------------------- |
+| `id`         | UUID         | PK, DEFAULT uuid_generate_v4() | Mã định danh duy nhất                                                                         |
+| `code`       | VARCHAR(50)  | UNIQUE, NOT NULL               | Mã người dùng / nhân viên                                                                     |
+| `full_name`  | VARCHAR(100) | NOT NULL                       | Họ và tên người dùng                                                                          |
+| `department` | VARCHAR(100) | NULL                           | Phòng ban                                                                                     |
+| `role`       | VARCHAR(50)  | NOT NULL, CHECK                | **3 Vai trò**: `'CREATOR'` (Người lập), `'KEEPER'` (Thủ kho), `'ACCOUNTANT'` (Kế toán trưởng) |
 
 > [!TIP]
 > **Thay đổi nghiệp vụ linh hoạt (Lập & Ký duyệt Đa Kho)**:
@@ -152,58 +155,61 @@ erDiagram
 ---
 
 ### 3.5. Bảng `items` (Vật tư / Hàng hóa)
-| Tên Trường | Kiểu Dữ Liệu | Ràng Buộc | Mô Tả |
-| :--- | :--- | :--- | :--- |
-| `id` | UUID | PK, DEFAULT uuid_generate_v4() | Mã định danh duy nhất |
-| `code` | VARCHAR(50) | UNIQUE, NOT NULL | **Cột C (Mã số)** trên Mẫu 01-VT |
-| `name` | VARCHAR(255) | NOT NULL | **Cột B (Tên vật tư)** trên Mẫu 01-VT |
-| `specifications` | TEXT | NULL | **Cột B (Quy cách, phẩm chất)** trên Mẫu 01-VT |
-| `unit_id` | UUID | FK -> `units`, NOT NULL | **Cột D (Đơn vị tính)** trên Mẫu 01-VT |
+
+| Tên Trường       | Kiểu Dữ Liệu | Ràng Buộc                      | Mô Tả                                          |
+| :--------------- | :----------- | :----------------------------- | :--------------------------------------------- |
+| `id`             | UUID         | PK, DEFAULT uuid_generate_v4() | Mã định danh duy nhất                          |
+| `code`           | VARCHAR(50)  | UNIQUE, NOT NULL               | **Cột C (Mã số)** trên Mẫu 01-VT               |
+| `name`           | VARCHAR(255) | NOT NULL                       | **Cột B (Tên vật tư)** trên Mẫu 01-VT          |
+| `specifications` | TEXT         | NULL                           | **Cột B (Quy cách, phẩm chất)** trên Mẫu 01-VT |
+| `unit_id`        | UUID         | FK -> `units`, NOT NULL        | **Cột D (Đơn vị tính)** trên Mẫu 01-VT         |
 
 ---
 
 > [!NOTE]
 > **Ánh xạ 2 dòng góc trên bên trái Mẫu 01-VT**:
-> * **`Đơn vị`**: Tên Công ty / Chi nhánh sở hữu hệ thống (Lấy từ Cấu hình hệ thống `.env` hoặc Cấu hình Doanh nghiệp: `COMPANY_NAME = "Công ty VIMES"`).
-> * **`Bộ phận`**: Phòng ban của Người lập phiếu hoặc Bộ phận yêu cầu nhập kho (Lấy từ `users.department` của `created_by_id`).
+>
+> - **`Đơn vị`**: Tên Công ty / Chi nhánh sở hữu hệ thống (Lấy từ Cấu hình hệ thống `.env` hoặc Cấu hình Doanh nghiệp: `COMPANY_NAME = "Công ty VIMES"`).
+> - **`Bộ phận`**: Phòng ban của Người lập phiếu hoặc Bộ phận yêu cầu nhập kho (Lấy từ `users.department` của `created_by_id`).
 
 ---
 
 ### 3.6. Bảng `inventory_receipts` (Header Phiếu Nhập Kho)
-| Tên Trường | Kiểu Dữ Liệu | Ràng Buộc | Mô Tả (Ánh xạ Mẫu 01-VT) |
-| :--- | :--- | :--- | :--- |
-| `id` | UUID | PK | Khóa chính |
-| `receipt_no` | VARCHAR(50) | UNIQUE, NOT NULL | **Số phiếu nhập** |
-| `receipt_date` | DATE | NOT NULL, DEFAULT CURRENT_DATE | **Ngày lập phiếu** |
-| `original_document_no` | VARCHAR(100) | NULL | **Số chứng từ gốc** |
-| `original_document_date` | DATE | NULL | **Ngày chứng từ gốc** |
-| `deliverer_name` | VARCHAR(100) | NULL | **Họ và tên người giao hàng** |
-| `supplier_id` | UUID | FK -> `suppliers` | Nhà cung cấp giao hàng |
-| `warehouse_id` | UUID | FK -> `warehouses` | **Kho nhận mặc định** |
-| `debit_account` | VARCHAR(20) | NULL | **Tài khoản Nợ** (VD: 152) |
-| `credit_account` | VARCHAR(20) | NULL | **Tài khoản Có** (VD: 331) |
-| `total_amount` | NUMERIC(18,2) | DEFAULT 0, CHECK >= 0 | **Tổng số tiền phiếu** |
-| `status` | ENUM | NOT NULL, DEFAULT 'DRAFT' | **Trạng thái phiếu**: `'DRAFT'` (Bản nháp), `'PUBLIC'` (Đã phát hành), `'CANCEL'` (Đã hủy) |
-| `created_by_id` | UUID | FK -> `users`, NOT NULL | **Người lập phiếu (Ký, họ tên)** (`role = 'CREATOR'`) |
-| `keeper_id` | UUID | FK -> `users` | **Thủ kho (Ký, họ tên)** (`role = 'KEEPER'`) |
-| `accountant_id` | UUID | FK -> `users` | **Kế toán trưởng (Ký, họ tên)** (`role = 'ACCOUNTANT'`) |
-| `created_at` | TIMESTAMPTZ | DEFAULT CURRENT_TIMESTAMP | Thời gian tạo bản ghi |
-| `updated_at` | TIMESTAMPTZ | DEFAULT CURRENT_TIMESTAMP | Thời gian cập nhật bản ghi |
+
+| Tên Trường               | Kiểu Dữ Liệu  | Ràng Buộc                      | Mô Tả (Ánh xạ Mẫu 01-VT)                                                                   |
+| :----------------------- | :------------ | :----------------------------- | :----------------------------------------------------------------------------------------- |
+| `id`                     | UUID          | PK                             | Khóa chính                                                                                 |
+| `receipt_no`             | VARCHAR(50)   | UNIQUE, NOT NULL               | **Số phiếu nhập**                                                                          |
+| `receipt_date`           | DATE          | NOT NULL, DEFAULT CURRENT_DATE | **Ngày lập phiếu**                                                                         |
+| `original_document_no`   | VARCHAR(100)  | NULL                           | **Số chứng từ gốc**                                                                        |
+| `original_document_date` | DATE          | NULL                           | **Ngày chứng từ gốc**                                                                      |
+| `deliverer_name`         | VARCHAR(100)  | NULL                           | **Họ và tên người giao hàng**                                                              |
+| `supplier_id`            | UUID          | FK -> `suppliers`              | Nhà cung cấp giao hàng                                                                     |
+| `warehouse_id`           | UUID          | FK -> `warehouses`             | **Kho nhận mặc định**                                                                      |
+| `debit_account`          | VARCHAR(20)   | NULL                           | **Tài khoản Nợ** (VD: 152)                                                                 |
+| `credit_account`         | VARCHAR(20)   | NULL                           | **Tài khoản Có** (VD: 331)                                                                 |
+| `total_amount`           | NUMERIC(18,2) | DEFAULT 0, CHECK >= 0          | **Tổng số tiền phiếu**                                                                     |
+| `status`                 | ENUM          | NOT NULL, DEFAULT 'DRAFT'      | **Trạng thái phiếu**: `'DRAFT'` (Bản nháp), `'PUBLIC'` (Đã phát hành), `'CANCEL'` (Đã hủy) |
+| `created_by_id`          | UUID          | FK -> `users`, NOT NULL        | **Người lập phiếu (Ký, họ tên)** (`role = 'CREATOR'`)                                      |
+| `keeper_id`              | UUID          | FK -> `users`                  | **Thủ kho (Ký, họ tên)** (`role = 'KEEPER'`)                                               |
+| `accountant_id`          | UUID          | FK -> `users`                  | **Kế toán trưởng (Ký, họ tên)** (`role = 'ACCOUNTANT'`)                                    |
+| `created_at`             | TIMESTAMPTZ   | DEFAULT CURRENT_TIMESTAMP      | Thời gian tạo bản ghi                                                                      |
+| `updated_at`             | TIMESTAMPTZ   | DEFAULT CURRENT_TIMESTAMP      | Thời gian cập nhật bản ghi                                                                 |
 
 ---
 
 ### 3.7. Bảng `inventory_receipt_details` (Detail - Đúng 8 Cột Mẫu 01-VT)
-| Tên Trường | Kiểu Dữ Liệu | Ràng Buộc | Mô Tả (Ánh xạ Mẫu 01-VT) |
-| :--- | :--- | :--- | :--- |
-| `id` | UUID | PK | Khóa chính dòng |
-| `receipt_id` | UUID | FK -> `inventory_receipts`, NOT NULL | Khóa ngoại trỏ tới Header (ON DELETE CASCADE) |
-| `item_id` | UUID | FK -> `items`, NOT NULL | **Cột B & C**: Mã số & Tên quy cách vật tư |
-| `unit_id` | UUID | FK -> `units`, NOT NULL | **Cột D**: Đơn vị tính |
-| `document_quantity` | NUMERIC(12,3) | NOT NULL, CHECK >= 0 | **Cột 1**: Số lượng theo chứng từ |
-| `actual_quantity` | NUMERIC(12,3) | NOT NULL, CHECK >= 0 | **Cột 2**: Số lượng thực nhập |
-| `unit_price` | NUMERIC(18,2) | NOT NULL, CHECK >= 0 | **Cột 3**: Đơn giá |
-| `amount` | NUMERIC(18,2) | GENERATED ALWAYS AS (...) | **Cột 4**: Thành tiền (`actual_quantity * unit_price`) |
-| `warehouse_id` | UUID | FK -> `warehouses` | Kho thực nhập (Dùng cho Nhập đa kho) |
+
+| Tên Trường          | Kiểu Dữ Liệu  | Ràng Buộc                            | Mô Tả (Ánh xạ Mẫu 01-VT)                               |
+| :------------------ | :------------ | :----------------------------------- | :----------------------------------------------------- |
+| `id`                | UUID          | PK                                   | Khóa chính dòng                                        |
+| `receipt_id`        | UUID          | FK -> `inventory_receipts`, NOT NULL | Khóa ngoại trỏ tới Header (ON DELETE CASCADE)          |
+| `item_id`           | UUID          | FK -> `items`, NOT NULL              | **Cột B & C**: Mã số & Tên quy cách vật tư             |
+| `unit_id`           | UUID          | FK -> `units`, NOT NULL              | **Cột D**: Đơn vị tính                                 |
+| `document_quantity` | NUMERIC(12,3) | NOT NULL, CHECK >= 0                 | **Cột 1**: Số lượng theo chứng từ                      |
+| `actual_quantity`   | NUMERIC(12,3) | NOT NULL, CHECK >= 0                 | **Cột 2**: Số lượng thực nhập                          |
+| `unit_price`        | NUMERIC(18,2) | NOT NULL, CHECK >= 0                 | **Cột 3**: Đơn giá                                     |
+| `amount`            | NUMERIC(18,2) | GENERATED ALWAYS AS (...)            | **Cột 4**: Thành tiền (`actual_quantity * unit_price`) |
 
 ---
 
@@ -277,13 +283,12 @@ CREATE TABLE inventory_receipts (
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
--- 7. Bảng Detail (Chi tiết 8 cột + Hỗ trợ Nhập đa kho)
+-- 7. Bảng Detail (Chi tiết 8 cột chuẩn Mẫu 01-VT, không có kho riêng từng dòng)
 CREATE TABLE inventory_receipt_details (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     receipt_id UUID NOT NULL REFERENCES inventory_receipts(id) ON DELETE CASCADE,
     item_id UUID NOT NULL REFERENCES items(id),
     unit_id UUID NOT NULL REFERENCES units(id),
-    warehouse_id UUID REFERENCES warehouses(id), -- Kho thực nhập từng dòng
     document_quantity NUMERIC(12, 3) NOT NULL CHECK (document_quantity >= 0),
     actual_quantity NUMERIC(12, 3) NOT NULL CHECK (actual_quantity >= 0),
     unit_price NUMERIC(18, 2) NOT NULL CHECK (unit_price >= 0),

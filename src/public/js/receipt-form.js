@@ -362,8 +362,6 @@ document.addEventListener("DOMContentLoaded", () => {
       rows.forEach((row) => {
         const itemId = row.querySelector(".item-select")?.value;
         const unitId = row.querySelector(".unit-select")?.value;
-        const rowWarehouseId =
-          row.querySelector(".row-warehouse-select")?.value || warehouseId;
         const docQty = parseFloat(
           row.querySelector(".doc-qty-input")?.value || 0,
         );
@@ -378,7 +376,6 @@ document.addEventListener("DOMContentLoaded", () => {
           details.push({
             item_id: itemId,
             unit_id: unitId,
-            warehouse_id: rowWarehouseId,
             document_quantity: docQty,
             actual_quantity: actualQty,
             unit_price: unitPrice,
@@ -414,7 +411,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const receiptId = receiptForm.dataset.receiptId;
-        const submitUrl = receiptId ? `/receipts/${receiptId}/edit` : "/receipts/create";
+        const submitUrl = receiptId
+          ? `/receipts/${receiptId}/edit`
+          : "/receipts/create";
         const response = await fetch(submitUrl, {
           method: "POST",
           headers: {
@@ -427,7 +426,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const result = await response.json();
         if (response.ok && result.success) {
-          showNotification("success", receiptId ? "Cập nhật phiếu nhập kho thành công!" : "Tạo phiếu nhập kho thành công!");
+          showNotification(
+            "success",
+            receiptId
+              ? "Cập nhật phiếu nhập kho thành công!"
+              : "Tạo phiếu nhập kho thành công!",
+          );
           setTimeout(() => {
             window.location.href = `/receipts/${result.data.id}`;
           }, 800);

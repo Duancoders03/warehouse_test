@@ -40,16 +40,6 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "RESTRICT",
       },
-      warehouse_id: {
-        type: Sequelize.UUID,
-        allowNull: true,
-        references: {
-          model: "warehouses",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "SET NULL",
-      },
       document_quantity: {
         type: Sequelize.DECIMAL(12, 3),
         allowNull: false,

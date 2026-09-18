@@ -34,9 +34,6 @@ InventoryReceiptDetail.belongsTo(Item, { foreignKey: 'item_id', as: 'item' });
 Unit.hasMany(InventoryReceiptDetail, { foreignKey: 'unit_id', as: 'receipt_details' });
 InventoryReceiptDetail.belongsTo(Unit, { foreignKey: 'unit_id', as: 'unit' });
 
-Warehouse.hasMany(InventoryReceiptDetail, { foreignKey: 'warehouse_id', as: 'receipt_details' });
-InventoryReceiptDetail.belongsTo(Warehouse, { foreignKey: 'warehouse_id', as: 'actual_warehouse' });
-
 export {
   Unit,
   Warehouse,

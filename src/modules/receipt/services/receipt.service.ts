@@ -75,7 +75,6 @@ export class ReceiptService {
           include: [
             { model: Item, as: 'item' },
             { model: Unit, as: 'unit' },
-            { model: Warehouse, as: 'actual_warehouse' },
           ],
         },
       ],
@@ -114,7 +113,6 @@ export class ReceiptService {
           include: [
             { model: Item, as: 'item' },
             { model: Unit, as: 'unit' },
-            { model: Warehouse, as: 'actual_warehouse' },
           ],
         },
       ],
@@ -150,7 +148,7 @@ export class ReceiptService {
           return {
             item_id: item.item_id,
             unit_id: item.unit_id,
-            warehouse_id: item.warehouse_id || dto.warehouse_id || null,
+            warehouse_id: dto.warehouse_id || null,
             document_quantity: docQty,
             actual_quantity: actQty,
             unit_price: price,
@@ -226,7 +224,7 @@ export class ReceiptService {
               receipt_id: id,
               item_id: item.item_id,
               unit_id: item.unit_id,
-              warehouse_id: item.warehouse_id || dto.warehouse_id || receipt.warehouse_id || null,
+              warehouse_id: dto.warehouse_id || receipt.warehouse_id || null,
               document_quantity: docQty,
               actual_quantity: actQty,
               unit_price: price,
@@ -361,8 +359,6 @@ export class ReceiptService {
         specifications: det.item?.specifications || '',
         unit_id: det.unit_id,
         unit_name: det.unit?.name || '',
-        warehouse_id: det.warehouse_id,
-        warehouse_name: det.actual_warehouse?.name || plain.warehouse?.name || '',
         document_quantity: Number(det.document_quantity) || 0,
         actual_quantity: Number(det.actual_quantity) || 0,
         unit_price: Number(det.unit_price) || 0,
